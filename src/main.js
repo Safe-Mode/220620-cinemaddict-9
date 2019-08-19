@@ -20,7 +20,7 @@ const mainEl = document.querySelector(`.main`);
 
 renderElement(headerEl, getSearchTpl());
 renderElement(headerEl, getProfileTpl());
-renderElement(mainEl, getMenuTpl());
+renderElement(mainEl, getMenuTpl(films));
 renderElement(mainEl, getSortingTpl());
 renderElement(mainEl, getFilmsTpl());
 
@@ -46,5 +46,5 @@ extraFilmsEls.forEach((extraFilmsEl) => {
   }
 });
 
-// renderElement(bodyEl, getFilmDetailsTpl());
+// renderElement(bodyEl, getFilmDetailsTpl(films[0]));
 // bodyEl.classList.add(`hide-overflow`);

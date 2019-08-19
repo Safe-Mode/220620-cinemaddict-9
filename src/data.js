@@ -23,26 +23,41 @@ const getFilmData = () => {
         return `${result[0].toUpperCase()}${result.slice(1)}`;
       }, ``);
     })(),
-    rates: parseFloat(`${getRandomInt(5, 9)}.${getRandomInt(0, 9)}`),
-    year: getRandomInt(1900, 2019),
+    rate: parseFloat(`${getRandomInt(5, 9)}.${getRandomInt(0, 9)}`),
+    release: -781326000000,
     duration: getRandomInt(30, 180),
-    genre: [
-      `Musical`,
-      `Western`,
-      `Drama`,
-      `Comedy`,
-      `Cartoon`,
-      `Mystery`,
-    ][getRandomInt(0, 6)],
+    genres: (() => {
+      return new Array(getRandomInt(1, 3)).fill(``).reduce((genres) => {
+        genres.add([`Musical`, `Western`, `Drama`, `Comedy`, `Cartoon`, `Mystery`, `Film-Noir`][getRandomInt(0, 6)]);
+        return genres;
+      }, new Set());
+    })(),
     description: (() => {
       return new Array(getRandomInt(1, 3)).fill(``).reduce((description) => `${description} ${DESC_FISH[getRandomInt(0, DESC_FISH.length)]}.`.trim(), ``);
     })(),
-    comments: (() => {
-      return new Array(getRandomInt(0, 5)).fill(``).reduce((comments) => {
-        comments.push(COMMENTS_FISH[getRandomInt(0, COMMENTS_FISH.length)]);
-        return comments;
-      }, []);
-    })(),
+    comments: [
+      {
+        name: `Anonymous`,
+        published: 1566223763777,
+        text: (() => {
+          return new Array(getRandomInt(0, 5)).fill(``).reduce((sentences) => {
+            sentences.push(COMMENTS_FISH[getRandomInt(0, COMMENTS_FISH.length)]);
+            return sentences;
+          }, []).join(`. `);
+        })(),
+        emoji: [`smile`, `sleeping`, `puke`, `angry`][getRandomInt(0, 3)]
+      }
+    ],
+    user: {
+      watchlist: Boolean(Math.round(Math.random())),
+      watched: Boolean(Math.round(Math.random())),
+      favorites: Boolean(Math.round(Math.random())),
+    },
+    director: `Anthony Mann`,
+    writers: [`Anne Wigton`, `Heinz Herald`, `Richard Weil`],
+    actors: [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`],
+    country: `USA`,
+    age: 18,
   };
 };
 
@@ -52,4 +67,6 @@ for (let i = 0; i < 15; i++) {
   films.push(getFilmData());
 }
 
-export {films};
+const rate = 10;
+
+export {films, rate};

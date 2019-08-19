@@ -1,15 +1,14 @@
-const MIN_PER_HOUR = 60;
-const RADIX_TEN = 10;
+import {MIN_PER_HOUR, RADIX_TEN} from '../const';
 
-const getFilmCardTpl = ({title, rates, year, duration, genre, poster, description, comments}) => {
+const getFilmCardTpl = ({title, rate, release, duration, genres, poster, description, comments}) => {
   return `
     <article class="film-card">
       <h3 class="film-card__title">${title}</h3>
-      <p class="film-card__rating">${rates}</p>
+      <p class="film-card__rating">${rate}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${year}</span>
+        <span class="film-card__year">${new Date(release).getFullYear()}</span>
         <span class="film-card__duration">${parseInt(duration / MIN_PER_HOUR, RADIX_TEN)}h ${duration % MIN_PER_HOUR}m</span>
-        <span class="film-card__genre">${genre}</span>
+        <span class="film-card__genre">${genres[0]}</span>
       </p>
       <img src="./images/posters/${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${description}</p>
