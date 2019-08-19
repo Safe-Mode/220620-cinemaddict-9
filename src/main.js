@@ -10,8 +10,17 @@ import {getSortingTpl} from './components/sorting';
 import {getTopFilmsTpl} from './components/top-films';
 import {films, amount, rankMap} from './data';
 
+const FILM_CARDS_PER_ROW = 5;
+
 const renderElement = (container, template, position = `beforeend`) => {
   container.insertAdjacentHTML(position, template);
+};
+
+const renderFilmCardsRow = () => {
+  for (let i = 0; i < FILM_CARDS_PER_ROW && films.length; i++) {
+    renderElement(filmsListContainerEl, getFilmCardTpl(films[0]));
+    films.shift();
+  }
 };
 
 const bodyEl = document.querySelector(`body`);
@@ -31,10 +40,7 @@ const filmsListContainerEl = filmsListEl.querySelector(`.films-list__container`)
 renderElement(filmsListEl, getShowMoreTpl());
 renderElement(filmsEl, getTopFilmsTpl());
 renderElement(filmsEl, getMostCommentedFilmsTpl());
-
-films.forEach((film) => {
-  renderElement(filmsListContainerEl, getFilmCardTpl(film));
-});
+renderFilmCardsRow();
 
 const extraFilmsEls = document.querySelectorAll(`.films-list--extra`);
 
@@ -46,5 +52,17 @@ extraFilmsEls.forEach((extraFilmsEl) => {
   }
 });
 
-// renderElement(bodyEl, getFilmDetailsTpl(films[0]));
+const showMoreEl = document.querySelector(`.films-list__show-more`);
+
+showMoreEl.addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+
+  renderFilmCardsRow();
+
+  if (!films.length) {
+    evt.currentTarget.remove();
+  }
+});
+
+renderElement(bodyEl, getFilmDetailsTpl(films[0]));
 // bodyEl.classList.add(`hide-overflow`);
