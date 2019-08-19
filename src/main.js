@@ -8,6 +8,7 @@ import {getSearchTpl} from './components/search';
 import {getShowMoreTpl} from './components/show-more';
 import {getSortingTpl} from './components/sorting';
 import {getTopFilmsTpl} from './components/top-films';
+import {filmCard} from './data';
 
 const renderElement = (container, template, position = `beforeend`) => {
   container.insertAdjacentHTML(position, template);
@@ -45,5 +46,5 @@ extraFilmsEls.forEach((extraFilmsEl) => {
   }
 });
 
-renderElement(bodyEl, getFilmDetailsTpl());
-bodyEl.classList.add(`hide-overflow`);
+// renderElement(bodyEl, getFilmDetailsTpl());
+// bodyEl.classList.add(`hide-overflow`);
