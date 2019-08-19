@@ -8,7 +8,7 @@ import {getSearchTpl} from './components/search';
 import {getShowMoreTpl} from './components/show-more';
 import {getSortingTpl} from './components/sorting';
 import {getTopFilmsTpl} from './components/top-films';
-import {films} from './data';
+import {films, amount, rankMap} from './data';
 
 const renderElement = (container, template, position = `beforeend`) => {
   container.insertAdjacentHTML(position, template);
@@ -19,7 +19,7 @@ const headerEl = document.querySelector(`.header`);
 const mainEl = document.querySelector(`.main`);
 
 renderElement(headerEl, getSearchTpl());
-renderElement(headerEl, getProfileTpl());
+renderElement(headerEl, getProfileTpl(amount, rankMap));
 renderElement(mainEl, getMenuTpl(films));
 renderElement(mainEl, getSortingTpl());
 renderElement(mainEl, getFilmsTpl());
@@ -46,5 +46,5 @@ extraFilmsEls.forEach((extraFilmsEl) => {
   }
 });
 
-renderElement(bodyEl, getFilmDetailsTpl(films[0]));
+// renderElement(bodyEl, getFilmDetailsTpl(films[0]));
 // bodyEl.classList.add(`hide-overflow`);

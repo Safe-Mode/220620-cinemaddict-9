@@ -75,6 +75,12 @@ for (let i = 0; i < 15; i++) {
   films.push(getFilmData());
 }
 
-const rate = 10;
+const amount = 22;
 
-export {films, rate};
+const rankMap = new Map([
+  [1, `Novice`],
+  [11, `Fan`],
+  [21, `Movie Buff`],
+]);
+
+export {films, amount, rankMap};
