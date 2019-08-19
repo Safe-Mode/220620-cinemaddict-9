@@ -8,7 +8,7 @@ import {getSearchTpl} from './components/search';
 import {getShowMoreTpl} from './components/show-more';
 import {getSortingTpl} from './components/sorting';
 import {getTopFilmsTpl} from './components/top-films';
-import {filmCard} from './data';
+import {films} from './data';
 
 const renderElement = (container, template, position = `beforeend`) => {
   container.insertAdjacentHTML(position, template);
@@ -32,9 +32,9 @@ renderElement(filmsListEl, getShowMoreTpl());
 renderElement(filmsEl, getTopFilmsTpl());
 renderElement(filmsEl, getMostCommentedFilmsTpl());
 
-for (let i = 0; i < 5; i++) {
-  renderElement(filmsListContainerEl, getFilmCardTpl(filmCard));
-}
+films.forEach((film) => {
+  renderElement(filmsListContainerEl, getFilmCardTpl(film));
+});
 
 const extraFilmsEls = document.querySelectorAll(`.films-list--extra`);
 
@@ -42,7 +42,7 @@ extraFilmsEls.forEach((extraFilmsEl) => {
   const extraFilmsContainerEl = extraFilmsEl.querySelector(`.films-list__container`);
 
   for (let i = 0; i < 2; i++) {
-    renderElement(extraFilmsContainerEl, getFilmCardTpl(filmCard));
+    renderElement(extraFilmsContainerEl, getFilmCardTpl(films[0]));
   }
 });
 

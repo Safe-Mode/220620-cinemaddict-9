@@ -6,42 +6,50 @@ const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-const filmCard = {
-  poster: [
-    `made-for-each-other.png`,
-    `popeye-meets-sinbad.png`,
-    `sagebrush-trail.jpg`,
-    `santa-claus-conquers-the-martians.jpg`,
-    `the-dance-of-life.jpg`,
-    `the-great-flamarion.jpg`,
-    `the-man-with-the-golden-arm.jpg`,
-  ][getRandomInt(0, 7)],
-  title: (() => {
-    return new Array(getRandomInt(1, 3)).fill(``).reduce((title) => {
-      let result = `${title} ${TITLE_FISH[getRandomInt(0, TITLE_FISH.length)]}`.trim();
-      return `${result[0].toUpperCase()}${result.slice(1)}`;
-    }, ``);
-  })(),
-  rates: parseFloat(`${getRandomInt(5, 9)}.${getRandomInt(0, 9)}`),
-  year: getRandomInt(1900, 2019),
-  duration: getRandomInt(30, 180),
-  genre: [
-    `Musical`,
-    `Western`,
-    `Drama`,
-    `Comedy`,
-    `Cartoon`,
-    `Mystery`,
-  ][getRandomInt(0, 6)],
-  description: (() => {
-    return new Array(getRandomInt(1, 3)).fill(``).reduce((description) => `${description} ${DESC_FISH[getRandomInt(0, DESC_FISH.length)]}.`.trim(), ``);
-  })(),
-  comments: (() => {
-    return new Array(getRandomInt(0, 5)).fill(``).reduce((comments) => {
-      comments.push(COMMENTS_FISH[getRandomInt(0, COMMENTS_FISH.length)]);
-      return comments;
-    }, []);
-  })(),
+const getFilmData = () => {
+  return {
+    poster: [
+      `made-for-each-other.png`,
+      `popeye-meets-sinbad.png`,
+      `sagebrush-trail.jpg`,
+      `santa-claus-conquers-the-martians.jpg`,
+      `the-dance-of-life.jpg`,
+      `the-great-flamarion.jpg`,
+      `the-man-with-the-golden-arm.jpg`,
+    ][getRandomInt(0, 7)],
+    title: (() => {
+      return new Array(getRandomInt(1, 3)).fill(``).reduce((title) => {
+        let result = `${title} ${TITLE_FISH[getRandomInt(0, TITLE_FISH.length)]}`.trim();
+        return `${result[0].toUpperCase()}${result.slice(1)}`;
+      }, ``);
+    })(),
+    rates: parseFloat(`${getRandomInt(5, 9)}.${getRandomInt(0, 9)}`),
+    year: getRandomInt(1900, 2019),
+    duration: getRandomInt(30, 180),
+    genre: [
+      `Musical`,
+      `Western`,
+      `Drama`,
+      `Comedy`,
+      `Cartoon`,
+      `Mystery`,
+    ][getRandomInt(0, 6)],
+    description: (() => {
+      return new Array(getRandomInt(1, 3)).fill(``).reduce((description) => `${description} ${DESC_FISH[getRandomInt(0, DESC_FISH.length)]}.`.trim(), ``);
+    })(),
+    comments: (() => {
+      return new Array(getRandomInt(0, 5)).fill(``).reduce((comments) => {
+        comments.push(COMMENTS_FISH[getRandomInt(0, COMMENTS_FISH.length)]);
+        return comments;
+      }, []);
+    })(),
+  };
 };
 
-export {filmCard};
+const films = [];
+
+for (let i = 0; i < 15; i++) {
+  films.push(getFilmData());
+}
+
+export {films};
