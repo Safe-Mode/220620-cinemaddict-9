@@ -16,10 +16,10 @@ const getFilmData = () => {
       `the-dance-of-life.jpg`,
       `the-great-flamarion.jpg`,
       `the-man-with-the-golden-arm.jpg`,
-    ][getRandomInt(0, 7)],
+    ][getRandomInt(0, 6)],
     title: (() => {
       return new Array(getRandomInt(1, 3)).fill(``).reduce((title) => {
-        let result = `${title} ${TITLE_FISH[getRandomInt(0, TITLE_FISH.length)]}`.trim();
+        let result = `${title} ${TITLE_FISH[getRandomInt(0, TITLE_FISH.length - 1)]}`.trim();
         return `${result[0].toUpperCase()}${result.slice(1)}`;
       }, ``);
     })(),
@@ -33,15 +33,23 @@ const getFilmData = () => {
       }, new Set());
     })(),
     description: (() => {
-      return new Array(getRandomInt(1, 3)).fill(``).reduce((description) => `${description} ${DESC_FISH[getRandomInt(0, DESC_FISH.length)]}.`.trim(), ``);
+      return new Array(getRandomInt(1, 3)).fill(``).reduce((description) => `${description} ${DESC_FISH[getRandomInt(0, DESC_FISH.length - 1)]}.`.trim(), ``);
     })(),
     comments: [
       {
         name: `Anonymous`,
-        published: 1566223763777,
+        published: [
+          Date.now(),
+          Date.now() - 1000 * 60 * 2,
+          Date.now() - 1000 * 60 * 30,
+          Date.now() - 1000 * 60 * 60,
+          Date.now() - 1000 * 60 * 60 * 12,
+          Date.now() - 1000 * 60 * 60 * 24,
+          Date.now() - 1000 * 60 * 60 * 24 * 3
+        ][getRandomInt(0, 6)],
         text: (() => {
-          return new Array(getRandomInt(0, 5)).fill(``).reduce((sentences) => {
-            sentences.push(COMMENTS_FISH[getRandomInt(0, COMMENTS_FISH.length)]);
+          return new Array(getRandomInt(1, 5)).fill(``).reduce((sentences) => {
+            sentences.push(COMMENTS_FISH[getRandomInt(0, COMMENTS_FISH.length - 1)]);
             return sentences;
           }, []).join(`. `);
         })(),

@@ -82,7 +82,7 @@ const getFilmDetailsTpl = ({poster, age, title, rate, director, writers, actors,
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-              ${comments.map(({emoji, text, name}) => `<li class="film-details__comment">
+              ${comments.map(({emoji, text, name, published}) => `<li class="film-details__comment">
                 <span class="film-details__comment-emoji">
                   <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji">
                 </span>
@@ -90,7 +90,7 @@ const getFilmDetailsTpl = ({poster, age, title, rate, director, writers, actors,
                   <p class="film-details__comment-text">${text}</p>
                   <p class="film-details__comment-info">
                     <span class="film-details__comment-author">${name}</span>
-                    <span class="film-details__comment-day">3 days ago</span>
+                    <span class="film-details__comment-day">${new Intl.DateTimeFormat(`en-GB`, {year: `2-digit`, month: `2-digit`, day: `2-digit`, hour: `2-digit`, minute: `2-digit`}).format(published)}</span>
                     <button class="film-details__comment-delete">Delete</button>
                   </p>
                 </div>

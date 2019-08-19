@@ -46,5 +46,5 @@ extraFilmsEls.forEach((extraFilmsEl) => {
   }
 });
 
-// renderElement(bodyEl, getFilmDetailsTpl(films[0]));
+renderElement(bodyEl, getFilmDetailsTpl(films[0]));
 // bodyEl.classList.add(`hide-overflow`);
