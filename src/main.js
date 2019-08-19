@@ -33,7 +33,7 @@ renderElement(filmsEl, getTopFilmsTpl());
 renderElement(filmsEl, getMostCommentedFilmsTpl());
 
 for (let i = 0; i < 5; i++) {
-  renderElement(filmsListContainerEl, getFilmCardTpl());
+  renderElement(filmsListContainerEl, getFilmCardTpl(filmCard));
 }
 
 const extraFilmsEls = document.querySelectorAll(`.films-list--extra`);
@@ -42,7 +42,7 @@ extraFilmsEls.forEach((extraFilmsEl) => {
   const extraFilmsContainerEl = extraFilmsEl.querySelector(`.films-list__container`);
 
   for (let i = 0; i < 2; i++) {
-    renderElement(extraFilmsContainerEl, getFilmCardTpl());
+    renderElement(extraFilmsContainerEl, getFilmCardTpl(filmCard));
   }
 });
 
