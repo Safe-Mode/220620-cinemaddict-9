@@ -1,16 +1,7 @@
+import {getRank} from '../util';
+
 const getProfileTpl = (amount, rankMap) => {
-  let prevRank;
-  let rank;
-
-  for (let [key, value] of rankMap) {
-    if (amount < key) {
-      rank = prevRank;
-    } else {
-      prevRank = value;
-    }
-  }
-
-  rank = (!rank) ? prevRank : rank;
+  const rank = getRank(amount, rankMap);
 
   return `
     <section class="header__profile profile">

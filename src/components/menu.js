@@ -1,15 +1,7 @@
-const getMenuTpl = (films) => {
-  const stats = films.reduce((stat, {user}) => {
-    stat.watchlist += Number(user.watchlist);
-    stat.watched += Number(user.watched);
-    stat.favorites += Number(user.favorites);
+import {getStats} from '../util';
 
-    return stat;
-  }, {
-    watchlist: 0,
-    watched: 0,
-    favorites: 0,
-  });
+const getMenuTpl = (films) => {
+  const stats = getStats(films);
 
   return `
     <nav class="main-navigation">
