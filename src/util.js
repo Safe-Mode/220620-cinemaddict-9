@@ -35,4 +35,21 @@ const createElement = (template) => {
   return dummy.firstElementChild;
 };
 
-export {getStats, getRank, createElement};
+const render = (container, element, position = `end`) => {
+  const insert = {
+    end: `append`,
+    begin: `prepend`,
+  };
+
+  container[insert[position]](element);
+};
+
+const unrender = (element) => {
+  element.remove();
+};
+
+const isEscPressed = (key) => {
+  return key === `Escape` || key === `Esc`;
+};
+
+export {getStats, getRank, createElement, render, unrender, isEscPressed};

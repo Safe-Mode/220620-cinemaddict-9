@@ -9,19 +9,58 @@ import {ShowMore} from './components/show-more';
 import {Sorting} from './components/sorting';
 import {films, amount, rankMap} from './data';
 import {FILM_CARDS_PER_ROW} from './const';
+import {render, unrender, isEscPressed} from './util';
 
-const render = (container, element, position = `end`) => {
-  const insert = {
-    end: `append`,
-    begin: `prepend`,
-  };
+const openPopup = (popup) => {
+  render(bodyEl, popup.getElement());
+  bodyEl.classList.add(`hide-overflow`);
+};
 
-  container[insert[position]](element);
+const closePopup = (popup) => {
+  unrender(popup.getElement());
+  popup.removeElement();
+  bodyEl.classList.remove(`hide-overflow`);
 };
 
 const renderFilmCardsRow = () => {
   for (let i = 0; i < FILM_CARDS_PER_ROW && films.length; i++) {
-    render(filmsListContainerEl, new Film(films[0]).getElement());
+    const filmCard = new Film(films[0]);
+    const filmDetails = new FilmDetails(films[0]);
+    const filmCardEl = filmCard.getElement();
+
+    const onEscKeydown = (evt) => {
+      if (isEscPressed(evt.key)) {
+        closePopup(filmDetails);
+        document.removeEventListener(`keydown`, onEscKeydown);
+      }
+    };
+
+    const onCloseBtnClick = (closeEvt) => {
+      closeEvt.preventDefault();
+
+      if (closeEvt.target.classList.contains(`film-details__close-btn`)) {
+        closePopup(filmDetails);
+        document.removeEventListener(`keydown`, onEscKeydown);
+      }
+    };
+
+    const onCardTogglerClick = (evt) => {
+      evt.preventDefault();
+
+      const togglers = [`film-card__poster`, `film-card__title`, `film-card__comments`];
+
+      if (togglers.some((cls) => evt.target.classList.contains(cls))) {
+        openPopup(filmDetails);
+        document.addEventListener(`keydown`, onEscKeydown);
+
+        filmDetails
+          .getElement()
+          .addEventListener(`click`, onCloseBtnClick);
+      }
+    };
+
+    filmCardEl.addEventListener(`click`, onCardTogglerClick);
+    render(filmsListContainerEl, filmCardEl);
     films.shift();
   }
 };
@@ -39,8 +78,10 @@ render(mainEl, new Films().getElement());
 const filmsEl = document.querySelector(`.films`);
 const filmsListEl = document.querySelector(`.films-list`);
 const filmsListContainerEl = filmsListEl.querySelector(`.films-list__container`);
+const showMore = new ShowMore();
+const showMoreEl = showMore.getElement();
 
-render(filmsListEl, new ShowMore().getElement());
+render(filmsListEl, showMoreEl);
 render(filmsEl, new ExtraFilms(`Top rated`).getElement());
 render(filmsEl, new ExtraFilms(`Most commented`).getElement());
 renderFilmCardsRow();
@@ -55,17 +96,13 @@ extraFilmsEls.forEach((extraFilmsEl) => {
   }
 });
 
-const showMoreEl = document.querySelector(`.films-list__show-more`);
-
 showMoreEl.addEventListener(`click`, (evt) => {
   evt.preventDefault();
 
   renderFilmCardsRow();
 
   if (!films.length) {
-    evt.currentTarget.remove();
+    unrender(evt.currentTarget);
+    showMore.removeElement();
   }
 });
-
-render(bodyEl, new FilmDetails(films[0]).getElement());
-// bodyEl.classList.add(`hide-overflow`);
