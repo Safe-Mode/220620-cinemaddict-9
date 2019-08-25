@@ -1,8 +1,8 @@
-const fishMap = new Map([
-  [`TITLE`, `Разнообразный и богатый опыт постоянное информационно-пропагандистское обеспечение нашей деятельности позволяет оценить значение системы обучения кадров, соответствует насущным потребностям`.split(` `)],
-  [`DESC`, `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`.split(`. `)],
-  [`COMMENTS`, `Не следует, однако забывать, что сложившаяся структура организации обеспечивает широкому кругу (специалистов) участие в формировании систем массового участия. Не следует, однако забывать, что начало повседневной работы по формированию позиции требуют определения и уточнения существенных финансовых и административных условий. С другой стороны реализация намеченных плановых заданий требуют от нас анализа модели развития. С другой стороны новая модель организационной деятельности позволяет выполнять важные задания по разработке системы обучения кадров, соответствует насущным потребностям. С другой стороны дальнейшее развитие различных форм деятельности играет важную роль в формировании дальнейших направлений развития.`.split(`. `)],
-]);
+const Fish = {
+  TITLE: `Разнообразный и богатый опыт постоянное информационно-пропагандистское обеспечение нашей деятельности позволяет оценить значение системы обучения кадров, соответствует насущным потребностям`.split(` `),
+  DESC: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`.split(`. `),
+  COMMENTS: `Не следует, однако забывать, что сложившаяся структура организации обеспечивает широкому кругу (специалистов) участие в формировании систем массового участия. Не следует, однако забывать, что начало повседневной работы по формированию позиции требуют определения и уточнения существенных финансовых и административных условий. С другой стороны реализация намеченных плановых заданий требуют от нас анализа модели развития. С другой стороны новая модель организационной деятельности позволяет выполнять важные задания по разработке системы обучения кадров, соответствует насущным потребностям. С другой стороны дальнейшее развитие различных форм деятельности играет важную роль в формировании дальнейших направлений развития.`.split(`. `),
+};
 
 const POSTERS = [
   `made-for-each-other.png`,
@@ -57,14 +57,14 @@ const getStringFromRandoms = (array, quantity, separator = ` `, isFirstCapital =
 const getFilmData = () => {
   return {
     poster: getRandomFromArray(POSTERS),
-    title: getStringFromRandoms(fishMap.get(`TITLE`), 3),
+    title: getStringFromRandoms(Fish[`TITLE`], 3),
     rate: parseFloat(`${getRandomInt(5, 9)}.${getRandomInt(0, 9)}`),
     release: -781326000000,
     duration: getRandomInt(30, 180),
     genres: getIterableOfRandoms(GENRES, 3, true),
-    description: getStringFromRandoms(fishMap.get(`DESC`), 5, `. `, false),
+    description: getStringFromRandoms(Fish[`DESC`], 5, `. `, false),
     get comments() {
-      const texts = getIterableOfRandoms(fishMap.get(`COMMENTS`), 5);
+      const texts = getIterableOfRandoms(Fish[`COMMENTS`], 5);
 
       return texts.map((text) => {
         return {

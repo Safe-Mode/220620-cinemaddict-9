@@ -29,4 +29,10 @@ const getRank = (amount, rankMap) => {
   return rank;
 };
 
-export {getStats, getRank};
+const createElement = (template) => {
+  const dummy = document.createElement(`div`);
+  dummy.innerHTML = template;
+  return dummy.firstElementChild;
+};
+
+export {getStats, getRank, createElement};
