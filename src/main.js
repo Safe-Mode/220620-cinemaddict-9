@@ -14,7 +14,7 @@ import {films, amount, rankMap} from './data';
 const bodyEl = document.querySelector(`body`);
 const headerEl = document.querySelector(`.header`);
 const mainEl = document.querySelector(`.main`);
-const filmsEl = new Films().getElement();
+const filmsEl = new Films(films).getElement();
 const filmsListEl = filmsEl.querySelector(`.films-list`);
 const filmsListContainerEl = filmsListEl.querySelector(`.films-list__container`);
 const showMore = new ShowMore();
@@ -93,7 +93,11 @@ render(headerEl, new Profile(amount, rankMap).getElement());
 render(mainEl, new Menu(films).getElement());
 render(mainEl, new Sorting().getElement());
 render(mainEl, filmsEl);
-render(filmsListEl, showMoreEl);
+
+if (films.length) {
+  render(filmsListEl, showMoreEl);
+}
+
 render(filmsEl, new ExtraFilms(`Top rated`).getElement());
 render(filmsEl, new ExtraFilms(`Most commented`).getElement());
 renderFilmCardsRow();
@@ -103,7 +107,7 @@ const extraFilmsEls = document.querySelectorAll(`.films-list--extra`);
 extraFilmsEls.forEach((extraFilmsEl) => {
   const extraFilmsContainerEl = extraFilmsEl.querySelector(`.films-list__container`);
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 2 && films.length; i++) {
     render(extraFilmsContainerEl, new Film(films[i]).getElement());
   }
 });

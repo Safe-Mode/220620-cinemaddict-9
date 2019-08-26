@@ -12,8 +12,9 @@ import {createElement} from '../util';
 // };
 
 class Films {
-  constructor() {
+  constructor(films) {
     this._element = null;
+    this._quantity = films.length;
   }
 
   getTemplate() {
@@ -21,7 +22,9 @@ class Films {
       <section class="films">
         <section class="films-list">
           <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
-          <div class="films-list__container"></div>
+          ${(this._quantity) ? `<div class="films-list__container"></div>` : `<div class="no-result">
+            There is no movies for your request.
+          </div>`}
         </section>
       </section>
     `;
