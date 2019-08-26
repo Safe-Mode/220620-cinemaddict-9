@@ -1,3 +1,5 @@
+import {FILM_CARDS_PER_ROW} from './const';
+import {render, unrender, isEscPressed} from './util';
 import {Film} from './components/film-card';
 import {FilmDetails} from './components/film-details';
 import {Films} from './components/films';
@@ -8,8 +10,15 @@ import {Search} from './components/search';
 import {ShowMore} from './components/show-more';
 import {Sorting} from './components/sorting';
 import {films, amount, rankMap} from './data';
-import {FILM_CARDS_PER_ROW} from './const';
-import {render, unrender, isEscPressed} from './util';
+
+const bodyEl = document.querySelector(`body`);
+const headerEl = document.querySelector(`.header`);
+const mainEl = document.querySelector(`.main`);
+const filmsEl = new Films().getElement();
+const filmsListEl = filmsEl.querySelector(`.films-list`);
+const filmsListContainerEl = filmsListEl.querySelector(`.films-list__container`);
+const showMore = new ShowMore();
+const showMoreEl = showMore.getElement();
 
 const openPopup = (popup) => {
   render(bodyEl, popup.getElement());
@@ -44,18 +53,32 @@ const renderFilmCardsRow = () => {
       }
     };
 
+    const onCommentBlur = () => {
+      document.addEventListener(`keydown`, onEscKeydown);
+    };
+
+    const onCommentFocus = (evt) => {
+      document.removeEventListener(`keydown`, onEscKeydown);
+      evt.target.addEventListener(`blur`, onCommentBlur);
+    };
+
     const onCardTogglerClick = (evt) => {
       evt.preventDefault();
 
       const togglers = [`film-card__poster`, `film-card__title`, `film-card__comments`];
+      const isToggler = togglers.some((cls) => evt.target.classList.contains(cls));
 
-      if (togglers.some((cls) => evt.target.classList.contains(cls))) {
+      if (isToggler) {
+        const filmDetailsEl = filmDetails.getElement();
+
         openPopup(filmDetails);
-        document.addEventListener(`keydown`, onEscKeydown);
 
-        filmDetails
-          .getElement()
-          .addEventListener(`click`, onCloseBtnClick);
+        document.addEventListener(`keydown`, onEscKeydown);
+        filmDetailsEl.addEventListener(`click`, onCloseBtnClick);
+
+        filmDetailsEl
+          .querySelector(`.film-details__comment-input`)
+          .addEventListener(`focus`, onCommentFocus);
       }
     };
 
@@ -65,22 +88,11 @@ const renderFilmCardsRow = () => {
   }
 };
 
-const bodyEl = document.querySelector(`body`);
-const headerEl = document.querySelector(`.header`);
-const mainEl = document.querySelector(`.main`);
-
 render(headerEl, new Search().getElement());
 render(headerEl, new Profile(amount, rankMap).getElement());
 render(mainEl, new Menu(films).getElement());
 render(mainEl, new Sorting().getElement());
-render(mainEl, new Films().getElement());
-
-const filmsEl = document.querySelector(`.films`);
-const filmsListEl = document.querySelector(`.films-list`);
-const filmsListContainerEl = filmsListEl.querySelector(`.films-list__container`);
-const showMore = new ShowMore();
-const showMoreEl = showMore.getElement();
-
+render(mainEl, filmsEl);
 render(filmsListEl, showMoreEl);
 render(filmsEl, new ExtraFilms(`Top rated`).getElement());
 render(filmsEl, new ExtraFilms(`Most commented`).getElement());
