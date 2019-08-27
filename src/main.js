@@ -31,10 +31,13 @@ const closePopup = (popup) => {
   bodyEl.classList.remove(`hide-overflow`);
 };
 
-const renderFilmCardsRow = () => {
-  for (let i = 0; i < FILM_CARDS_PER_ROW && films.length; i++) {
-    const filmCard = new Film(films[0]);
-    const filmDetails = new FilmDetails(films[0]);
+const renderFilmCardsRow = (rowNum = 1) => {
+  const startIndex = (rowNum - 1) * FILM_CARDS_PER_ROW;
+  const finishIndex = rowNum * FILM_CARDS_PER_ROW - 1;
+
+  for (let i = startIndex; i <= finishIndex && i < films.length; i++) {
+    const filmCard = new Film(films[i]);
+    const filmDetails = new FilmDetails(films[i]);
     const filmCardEl = filmCard.getElement();
 
     const onEscKeydown = (evt) => {
@@ -84,8 +87,14 @@ const renderFilmCardsRow = () => {
 
     filmCardEl.addEventListener(`click`, onCardTogglerClick);
     render(filmsListContainerEl, filmCardEl);
-    films.shift();
   }
+
+  if (rowNum * FILM_CARDS_PER_ROW >= films.length) {
+    unrender(showMoreEl);
+    showMore.removeElement();
+  }
+
+  return ++rowNum;
 };
 
 render(headerEl, new Search().getElement());
@@ -100,8 +109,8 @@ if (films.length) {
 
 render(filmsEl, new ExtraFilms(`Top rated`).getElement());
 render(filmsEl, new ExtraFilms(`Most commented`).getElement());
-renderFilmCardsRow();
 
+let rowNum = renderFilmCardsRow();
 const extraFilmsEls = document.querySelectorAll(`.films-list--extra`);
 
 extraFilmsEls.forEach((extraFilmsEl) => {
@@ -114,11 +123,5 @@ extraFilmsEls.forEach((extraFilmsEl) => {
 
 showMoreEl.addEventListener(`click`, (evt) => {
   evt.preventDefault();
-
-  renderFilmCardsRow();
-
-  if (!films.length) {
-    unrender(evt.currentTarget);
-    showMore.removeElement();
-  }
+  rowNum = renderFilmCardsRow(rowNum);
 });
