@@ -1,4 +1,4 @@
-import {MIN_PER_HOUR, RADIX_TEN} from '../const';
+import {MIN_PER_HOUR, RADIX_TEN, EMOJI} from '../const';
 import {AbstractComponent} from './abstract-component';
 
 class FilmDetails extends AbstractComponent {
@@ -124,25 +124,12 @@ class FilmDetails extends AbstractComponent {
                 </label>
 
                 <div class="film-details__emoji-list">
-                  <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping">
-                  <label class="film-details__emoji-label" for="emoji-smile">
-                    <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                  </label>
-
-                  <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
-                  <label class="film-details__emoji-label" for="emoji-sleeping">
-                    <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                  </label>
-
-                  <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
-                  <label class="film-details__emoji-label" for="emoji-gpuke">
-                    <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                  </label>
-
-                  <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
-                  <label class="film-details__emoji-label" for="emoji-angry">
-                    <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                  </label>
+                  ${EMOJI.map((emoji) => `
+                    <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}">
+                    <label class="film-details__emoji-label" for="emoji-${emoji}">
+                      <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
+                    </label>
+                  `).join(``)}
                 </div>
               </div>
             </section>
