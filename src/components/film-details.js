@@ -1,9 +1,9 @@
 import {MIN_PER_HOUR, RADIX_TEN} from '../const';
-import {createElement} from '../util';
+import {AbstractComponent} from './abstract-component';
 
-class FilmDetails {
+class FilmDetails extends AbstractComponent {
   constructor({poster, age, title, rate, director, writers, actors, release, duration, country, genres, description, comments}) {
-    this._element = null;
+    super();
     this._poster = poster;
     this._age = age;
     this._title = title;
@@ -150,17 +150,6 @@ class FilmDetails {
         </form>
       </section>
     `;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

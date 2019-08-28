@@ -1,18 +1,8 @@
-import {createElement} from '../util';
+import {AbstractComponent} from './abstract-component';
 
-// const getSortingTpl = () => {
-//   return `
-//     <ul class="sort">
-//       <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-//       <li><a href="#" class="sort__button">Sort by date</a></li>
-//       <li><a href="#" class="sort__button">Sort by rating</a></li>
-//     </ul>
-//   `;
-// };
-
-class Sorting {
+class Sorting extends AbstractComponent {
   constructor() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
@@ -23,17 +13,6 @@ class Sorting {
         <li><a href="#" class="sort__button">Sort by rating</a></li>
       </ul>
     `;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
