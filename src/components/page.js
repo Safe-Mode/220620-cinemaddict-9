@@ -76,8 +76,8 @@ class PageController {
         filmDetailsEl.addEventListener(`click`, onCloseBtnClick);
 
         filmDetailsEl
-              .querySelector(`.film-details__comment-input`)
-              .addEventListener(`focus`, onCommentFocus);
+          .querySelector(`.film-details__comment-input`)
+          .addEventListener(`focus`, onCommentFocus);
       }
     };
 
@@ -99,7 +99,9 @@ class PageController {
       }
     }
 
-    if (this._filmsRendered >= films.length) {
+    const isFinish = this._filmsRendered >= films.length;
+
+    if (isFinish) {
       unrender(this._showMore.getElement());
       this._showMore.removeElement();
     }
@@ -110,11 +112,12 @@ class PageController {
 
     const type = evt.target.dataset.type;
     const activeLinkCls = `sort__button--active`;
-    const activeLinkEl = this._sortEl.querySelector(`.${activeLinkCls}`);
-    const filmsListContainerEl = this._mainListEl.querySelector(`.films-list__container`);
 
     if (type) {
       const filmsCopy = this._films.slice();
+      const activeLinkEl = this._sortEl.querySelector(`.${activeLinkCls}`);
+      const filmsListContainerEl = this._mainListEl.querySelector(`.films-list__container`);
+      const isNewLink = activeLinkEl !== evt.target;
       filmsListContainerEl.innerHTML = ``;
 
       switch (type) {
@@ -131,7 +134,7 @@ class PageController {
 
       this._renderCardsRow(this._filmsToRender, this._mainListEl, CardsPerRow.MAIN, true, false);
 
-      if (activeLinkEl !== evt.target) {
+      if (isNewLink) {
         activeLinkEl.classList.remove(activeLinkCls);
         evt.target.classList.add(activeLinkCls);
       }
@@ -143,10 +146,11 @@ class PageController {
     const topListEl = new FilmList(`Top rated`, this._films, true).getElement();
     const bandyListEl = new FilmList(`Most commented`, this._films, true).getElement();
     const showMoreEl = this._showMore.getElement();
+    const isMultiRow = this._filmsToRender.length > CardsPerRow.MAIN;
 
     this._renderCardsRow(this._films, this._mainListEl, CardsPerRow.MAIN);
 
-    if (this._films.length) {
+    if (isMultiRow) {
       showMoreEl.addEventListener(`click`, (evt) => {
         evt.preventDefault();
         this._renderCardsRow(this._filmsToRender, this._mainListEl, CardsPerRow.MAIN);
