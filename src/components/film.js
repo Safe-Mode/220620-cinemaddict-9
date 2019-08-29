@@ -8,7 +8,7 @@ class Film extends AbstractComponent {
     this._rate = rate;
     this._release = release;
     this._duration = duration;
-    this._genres = genres;
+    this._genres = Array.from(genres);
     this._poster = poster;
     this._description = description;
     this._comments = comments;

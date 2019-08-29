@@ -1,5 +1,6 @@
 import {CardsPerRow} from '../const';
 import {render, unrender, isEscPressed} from '../util';
+import {Sort} from './sort';
 import {Films} from './films';
 import {FilmList} from './film-list';
 import {Film} from './film';
@@ -10,6 +11,11 @@ class PageController {
   constructor(container, films) {
     this._container = container;
     this._films = films;
+    this._filmsToRender = films;
+    this._filmsRendered = 0;
+    this._sortEl = new Sort().getElement();
+    this._mainListEl = new FilmList(`All movies. Upcoming`, this._films).getElement();
+    this._showMore = new ShowMore();
   }
 
   _renderFilmCard(film, filmsListEl) {
@@ -79,44 +85,82 @@ class PageController {
     render(filmsListContainerEl, filmCardEl);
   }
 
+  _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
+    const quantity = this._filmsRendered;
+    const finishIndex = (isContinues) ? quantity + cardsPerRow : quantity;
+
+    this._filmsRendered = (isContinues) ? this._filmsRendered : 0;
+
+    for (let i = this._filmsRendered; i < finishIndex && i < films.length; i++) {
+      this._renderFilmCard(films[i], listEl);
+
+      if (isAdded) {
+        this._filmsRendered++;
+      }
+    }
+
+    if (this._filmsRendered >= films.length) {
+      unrender(this._showMore.getElement());
+      this._showMore.removeElement();
+    }
+  }
+
+  _onSortLinkClick(evt) {
+    evt.preventDefault();
+
+    const type = evt.target.dataset.type;
+    const activeLinkCls = `sort__button--active`;
+    const activeLinkEl = this._sortEl.querySelector(`.${activeLinkCls}`);
+    const filmsListContainerEl = this._mainListEl.querySelector(`.films-list__container`);
+
+    if (type) {
+      const filmsCopy = this._films.slice();
+      filmsListContainerEl.innerHTML = ``;
+
+      switch (type) {
+        case `default`:
+          this._filmsToRender = this._films;
+          break;
+        case `date`:
+          this._filmsToRender = filmsCopy.sort((filmA, filmB) => filmB.release - filmA.release);
+          break;
+        case `rating`:
+          this._filmsToRender = filmsCopy.sort((filmA, filmB) => filmB.rate - filmA.rate);
+          break;
+      }
+
+      this._renderCardsRow(this._filmsToRender, this._mainListEl, CardsPerRow.MAIN, true, false);
+
+      if (activeLinkEl !== evt.target) {
+        activeLinkEl.classList.remove(activeLinkCls);
+        evt.target.classList.add(activeLinkCls);
+      }
+    }
+  }
+
   init() {
     const filmsEl = new Films().getElement();
-    const mainListEl = new FilmList(`All movies. Upcoming`, this._films).getElement();
     const topListEl = new FilmList(`Top rated`, this._films, true).getElement();
     const bandyListEl = new FilmList(`Most commented`, this._films, true).getElement();
-    const showMore = new ShowMore();
-    const showMoreEl = showMore.getElement();
+    const showMoreEl = this._showMore.getElement();
 
-    const renderFilmCardsRow = (listEl, cardsPerRow, row = 1) => {
-      const startIndex = (row - 1) * cardsPerRow;
-      const finishIndex = row * cardsPerRow - 1;
-
-      for (let i = startIndex; i <= finishIndex && i < this._films.length; i++) {
-        this._renderFilmCard(this._films[i], listEl);
-      }
-
-      if (row * cardsPerRow >= this._films.length) {
-        unrender(showMoreEl);
-        showMore.removeElement();
-      }
-
-      return ++row;
-    };
-
-    let rowMain = renderFilmCardsRow(mainListEl, CardsPerRow.MAIN);
+    this._renderCardsRow(this._films, this._mainListEl, CardsPerRow.MAIN);
 
     if (this._films.length) {
       showMoreEl.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        rowMain = renderFilmCardsRow(mainListEl, CardsPerRow.MAIN, rowMain);
+        this._renderCardsRow(this._filmsToRender, this._mainListEl, CardsPerRow.MAIN);
       });
 
-      render(mainListEl, showMoreEl);
+      render(this._mainListEl, showMoreEl);
     }
 
-    renderFilmCardsRow(topListEl, CardsPerRow.EXTRA);
-    renderFilmCardsRow(bandyListEl, CardsPerRow.EXTRA);
-    render(filmsEl, mainListEl);
+    this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
+
+    render(this._container, this._sortEl);
+    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false);
+    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false);
+    render(filmsEl, this._mainListEl);
     render(filmsEl, topListEl);
     render(filmsEl, bandyListEl);
     render(this._container, filmsEl);

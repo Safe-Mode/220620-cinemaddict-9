@@ -1,4 +1,4 @@
-import {MIN_PER_HOUR, RADIX_TEN, EMOJI} from '../const';
+import {MIN_PER_HOUR, RADIX_TEN, EMOJIS} from '../const';
 import {AbstractComponent} from './abstract-component';
 
 class FilmDetails extends AbstractComponent {
@@ -124,7 +124,7 @@ class FilmDetails extends AbstractComponent {
                 </label>
 
                 <div class="film-details__emoji-list">
-                  ${EMOJI.map((emoji) => `
+                  ${EMOJIS.map((emoji) => `
                     <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}">
                     <label class="film-details__emoji-label" for="emoji-${emoji}">
                       <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">

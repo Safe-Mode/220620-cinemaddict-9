@@ -4,6 +4,6 @@ const CardsPerRow = {
   MAIN: 5,
   EXTRA: 2,
 };
-const EMOJI = [`smile`, `sleeping`, `puke`, `angry`];
+const EMOJIS = [`smile`, `sleeping`, `puke`, `angry`];
 
-export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJI};
+export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJIS};
