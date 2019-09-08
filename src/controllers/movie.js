@@ -1,3 +1,4 @@
+import {cloneDeep} from 'lodash';
 import {render, unrender, isEscPressed, isEnterPressed} from '../util';
 import {Film} from '../components/film';
 import {FilmDetails} from '../components/film-details';
@@ -17,22 +18,29 @@ class MovieController {
   }
 
   _initTmpData() {
-    this._tmpData = Object.assign({}, this._data);
+    this._tmpData = cloneDeep(this._data);
   }
 
   _resetTmpData() {
     this._tmpData = null;
   }
 
+  setDefaultView() {
+    if (document.body.contains(this._details.getElement())) {
+      unrender(this._details.getElement());
+      this._details.removeElement();
+    }
+  }
+
   init() {
     const toggleBodyScroll = () => {
-      const bodyEl = document.querySelector(`body`);
       const overflowCls = `hide-overflow`;
-      const clsMethod = (bodyEl.classList.contains(overflowCls)) ? `remove` : `add`;
-      bodyEl.classList[clsMethod](overflowCls);
+      const clsMethod = (document.body.classList.contains(overflowCls)) ? `remove` : `add`;
+      document.body.classList[clsMethod](overflowCls);
     };
 
     const openPopup = (popup) => {
+      this._onChangeView();
       render(this._container, popup.getElement());
       toggleBodyScroll();
     };
@@ -43,9 +51,9 @@ class MovieController {
       toggleBodyScroll();
     };
 
-    const reopenPopup = () => {
-      closePopup();
-      openPopup();
+    const reopenPopup = (popup) => {
+      unrender(popup.getElement());
+      render(this._container, popup.getElement());
     };
 
     const onEscKeydown = (evt) => {
@@ -110,7 +118,7 @@ class MovieController {
         this._tmpData.user.watchlist = !this._tmpData.user.watchlist;
       }
 
-      this._onDataChange(this._tmpData, this._data);
+      this._onDataChange(this._tmpData, this._data, reopenPopup.bind(this, this._details));
       this._resetTmpData();
     };
 
@@ -146,6 +154,22 @@ class MovieController {
       }
     };
 
+    const onDeleteCommentClick = (evt) => {
+      evt.preventDefault();
+
+      this._initTmpData();
+
+      const commentIndex = [...this._details
+        .getElement()
+        .querySelectorAll(`.film-details__comment`)]
+        .indexOf(evt.target.closest(`li`));
+
+      this._tmpData.comments.splice(commentIndex, 1);
+
+      this._onDataChange(this._tmpData, this._data, reopenPopup.bind(this, this._details));
+      this._resetTmpData();
+    };
+
     const onCardTogglerClick = (evt) => {
       evt.preventDefault();
 
@@ -172,6 +196,9 @@ class MovieController {
         filmDetailsEl
           .querySelector(`.film-details__comment-input`)
           .addEventListener(`keydown`, onCommentEnter);
+        filmDetailsEl
+          .querySelector(`.film-details__comment-delete`)
+          .addEventListener(`click`, onDeleteCommentClick);
       }
     };
 
@@ -190,7 +217,7 @@ class MovieController {
           this._tmpData.user.favorite = !this._tmpData.user.favorite;
         }
 
-        this._onDataChange(this._tmpData, this._data, evt.target.closest(`section`));
+        this._onDataChange(this._tmpData, this._data);
         this._resetTmpData();
       }
     };

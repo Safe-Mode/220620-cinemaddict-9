@@ -20,55 +20,49 @@ class PageController {
     this._showMore = new ShowMore();
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
+    this._subscriptions = [];
   }
 
-  _onDataChange(newData, oldData, listEl = null) {
+  _onDataChange(newData, oldData, cb) {
     const filmIndex = this._films.indexOf(oldData);
     const boardEl = this._board.getElement();
 
-    const restLists = (listEl) ? [
-      ...boardEl.querySelectorAll(`.films-list`),
-      ...boardEl.querySelectorAll(`.films-list--extra`)
-    ]
-    .filter((node) => node !== listEl) : [
+    const lists = [
       ...boardEl.querySelectorAll(`.films-list`),
       ...boardEl.querySelectorAll(`.films-list--extra`)
     ];
 
     this._films[filmIndex] = newData;
 
-    if (listEl) {
-      this._renderCard(listEl, newData, filmIndex);
+    if (cb) {
+      cb();
     }
 
-    restLists.forEach((list) => {
-      list.querySelector(`.films-list__container`).innerHTML = ``;
-
-      if (list.classList.contains(`films-list--extra`)) {
-        this._renderCardsRow(this._filmsToRender, list, CardsPerRow.EXTRA, false, false);
-      } else {
-        this._renderCardsRow(this._films, list, CardsPerRow.MAIN);
+    lists.forEach((list) => {
+      if (filmIndex < list.querySelector(`.films-list__container`).children.length) {
+        this._renderCard(list, newData, filmIndex);
       }
     });
   }
 
   _onChangeView() {
-
+    this._subscriptions.forEach((subscription) => subscription());
   }
 
   _renderCard(listEl, film, position) {
     const movie = new MovieController(listEl, film, this._onDataChange, this._onChangeView, position);
 
     movie.init();
+    this._subscriptions.push(movie.setDefaultView.bind(movie));
   }
 
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
-    const quantity = this._filmsRendered;
-    const finishIndex = (isContinues) ? quantity + cardsPerRow : cardsPerRow;
+    let quantity = this._filmsRendered;
+    const finishIndex = (isContinues) ? this._filmsRendered + cardsPerRow : cardsPerRow;
 
-    this._filmsRendered = (isContinues) ? this._filmsRendered : 0;
+    quantity = (isContinues) ? this._filmsRendered : 0;
 
-    for (let i = this._filmsRendered; i < finishIndex && i < films.length; i++) {
+    for (let i = quantity; i < finishIndex && i < films.length; i++) {
       this._renderCard(listEl, films[i]);
 
       if (isAdded) {

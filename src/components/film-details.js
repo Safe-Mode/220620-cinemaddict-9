@@ -117,7 +117,7 @@ class FilmDetails extends AbstractComponent {
                     <p class="film-details__comment-info">
                       <span class="film-details__comment-author">${name}</span>
                       <span class="film-details__comment-day">${new Intl.DateTimeFormat(`en-GB`, {year: `2-digit`, month: `2-digit`, day: `2-digit`, hour: `2-digit`, minute: `2-digit`}).format(published)}</span>
-                      <button class="film-details__comment-delete">Delete</button>
+                      <button class="film-details__comment-delete" type="button">Delete</button>
                     </p>
                   </div>
                 </li>`).join(``)}
