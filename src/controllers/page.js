@@ -22,15 +22,24 @@ class PageController {
     this._onChangeView = this._onChangeView.bind(this);
   }
 
-  _onDataChange(newData, oldData, listEl) {
+  _onDataChange(newData, oldData, listEl = null) {
     const filmIndex = this._films.indexOf(oldData);
-    const restLists = [...this._board
-      .getElement()
-      .querySelectorAll(`section`)]
-      .filter((node) => node !== listEl);
+    const boardEl = this._board.getElement();
+
+    const restLists = (listEl) ? [
+      ...boardEl.querySelectorAll(`.films-list`),
+      ...boardEl.querySelectorAll(`.films-list--extra`)
+    ]
+    .filter((node) => node !== listEl) : [
+      ...boardEl.querySelectorAll(`.films-list`),
+      ...boardEl.querySelectorAll(`.films-list--extra`)
+    ];
 
     this._films[filmIndex] = newData;
-    this._renderCard(listEl, newData, filmIndex);
+
+    if (listEl) {
+      this._renderCard(listEl, newData, filmIndex);
+    }
 
     restLists.forEach((list) => {
       list.querySelector(`.films-list__container`).innerHTML = ``;
@@ -84,7 +93,9 @@ class PageController {
     if (type) {
       const filmsCopy = this._films.slice();
       const activeLinkEl = this._sortEl.querySelector(`.${activeLinkCls}`);
-      const filmsListContainerEl = this._mainListEl.querySelector(`.films-list__container`);
+      const filmsListContainerEl = this._mainList
+        .getElement()
+        .querySelector(`.films-list__container`);
       const isNewLink = activeLinkEl !== evt.target;
       filmsListContainerEl.innerHTML = ``;
 

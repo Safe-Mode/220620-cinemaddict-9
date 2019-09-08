@@ -2,7 +2,7 @@ import {MIN_PER_HOUR, RADIX_TEN, EMOJIS} from '../const';
 import {AbstractComponent} from './abstract-component';
 
 class FilmDetails extends AbstractComponent {
-  constructor({poster, age, title, rate, director, writers, actors, release, duration, country, genres, description, comments, user: {watchlist, watched, favorites}}) {
+  constructor({poster, age, title, rate, director, writers, actors, release, duration, country, genres, description, comments, user: {watchlist, watched, favorite, rating}}) {
     super();
     this._poster = poster;
     this._age = age;
@@ -19,7 +19,8 @@ class FilmDetails extends AbstractComponent {
     this._comments = comments;
     this._watchlist = watchlist;
     this._watched = watched;
-    this._favorite = favorites;
+    this._favorite = favorite;
+    this._rating = rating;
   }
 
   getTemplate() {
@@ -46,6 +47,9 @@ class FilmDetails extends AbstractComponent {
 
                   <div class="film-details__rating">
                     <p class="film-details__total-rating">${this._rate}</p>
+                    ${(this._rating) ? `
+                      <p class="film-details__user-rating">Your rate ${this._rating}</p>
+                    ` : ``}
                   </div>
                 </div>
 
@@ -116,7 +120,7 @@ class FilmDetails extends AbstractComponent {
                       <button class="film-details__comment-delete">Delete</button>
                     </p>
                   </div>
-                </li>`)}
+                </li>`).join(``)}
               </ul>
 
               <div class="film-details__new-comment">
@@ -139,6 +143,48 @@ class FilmDetails extends AbstractComponent {
           </div>
         </form>
       </section>
+    `;
+  }
+
+  getRatingTemplate() {
+    return `
+      <div class="form-details__middle-container">
+        <section class="film-details__user-rating-wrap">
+          <div class="film-details__user-rating-controls">
+            <button class="film-details__watched-reset" type="button">Undo</button>
+          </div>
+
+          <div class="film-details__user-score">
+            <div class="film-details__user-rating-poster">
+              <img src="./images/posters/${this._poster}" alt="film-poster" class="film-details__user-rating-img">
+            </div>
+
+            <section class="film-details__user-rating-inner">
+              <h3 class="film-details__user-rating-title">${this._title}</h3>
+
+              <p class="film-details__user-rating-feelings">How you feel it?</p>
+
+              <div class="film-details__user-rating-score">
+
+                ${new Array(9).fill(``).map((it, i) => `
+                  <input
+                    type="radio"
+                    name="score"
+                    class="film-details__user-rating-input visually-hidden"
+                    value="${i + 1}" id="rating-${i + 1}"
+                    ${(this._rating === i + 1) ? `checked` : ``}
+                  >
+                  <label
+                    class="film-details__user-rating-label"
+                    for="rating-${i + 1}"
+                  >${i + 1}</label>
+                `).join(``)}
+
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
     `;
   }
 }

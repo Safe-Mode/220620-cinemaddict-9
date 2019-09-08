@@ -2,7 +2,7 @@ import {MIN_PER_HOUR, RADIX_TEN} from '../const';
 import {AbstractComponent} from './abstract-component';
 
 class Film extends AbstractComponent {
-  constructor({title, rate, release, duration, genres, poster, description, comments, user: {watchlist, watched, favorites}}) {
+  constructor({title, rate, release, duration, genres, poster, description, comments, user: {watchlist, watched, favorite}}) {
     super();
     this._title = title;
     this._rate = rate;
@@ -14,7 +14,7 @@ class Film extends AbstractComponent {
     this._comments = comments;
     this._watchlist = watchlist;
     this._watched = watched;
-    this._favorite = favorites;
+    this._favorite = favorite;
   }
 
   getTemplate() {

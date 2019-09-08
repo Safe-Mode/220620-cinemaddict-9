@@ -1,4 +1,4 @@
-import {render, unrender, isEscPressed} from '../util';
+import {render, unrender, isEscPressed, isEnterPressed} from '../util';
 import {Film} from '../components/film';
 import {FilmDetails} from '../components/film-details';
 
@@ -12,6 +12,8 @@ class MovieController {
     this._details = new FilmDetails(this._data);
     this._tmpData = null;
     this._position = position;
+    this._onDataChange = onDataChange;
+    this._onChangeView = onChangeView;
   }
 
   _initTmpData() {
@@ -41,6 +43,11 @@ class MovieController {
       toggleBodyScroll();
     };
 
+    const reopenPopup = () => {
+      closePopup();
+      openPopup();
+    };
+
     const onEscKeydown = (evt) => {
       if (isEscPressed(evt.key)) {
         closePopup(this._details);
@@ -65,6 +72,80 @@ class MovieController {
       evt.target.addEventListener(`blur`, onCommentBlur);
     };
 
+    const onRatingInput = (evt) => {
+      this._initTmpData();
+      this._tmpData.user.rating = evt.target.value;
+      this._onDataChange(this._tmpData, this._data);
+      this._resetTmpData();
+    };
+
+    const onDetailsControlInput = (evt) => {
+      const detailsEl = this._details.getElement();
+      const detailsMiddleEl = detailsEl.querySelector(`.form-details__middle-container`);
+
+      this._initTmpData();
+
+      if (evt.target.name === `watched`) {
+        if (evt.target.checked) {
+          detailsEl
+            .querySelector(`.form-details__top-container`)
+            .insertAdjacentHTML(`afterend`, this._details.getRatingTemplate());
+
+          const filmUserRatingEl = this._details
+            .getElement()
+            .querySelector(`.film-details__user-rating-score`);
+
+          filmUserRatingEl.addEventListener(`input`, onRatingInput);
+        } else {
+          if (detailsEl.contains(detailsMiddleEl)) {
+            unrender(detailsMiddleEl);
+          }
+        }
+
+        this._tmpData.user.watched = !this._tmpData.user.watched;
+        this._tmpData.user.rating = null;
+      } else if (evt.target.name === `favorite`) {
+        this._tmpData.user.favorite = !this._tmpData.user.favorite;
+      } else if (evt.target.name === `watchlist`) {
+        this._tmpData.user.watchlist = !this._tmpData.user.watchlist;
+      }
+
+      this._onDataChange(this._tmpData, this._data);
+      this._resetTmpData();
+    };
+
+    const onEmojiInput = (evt) => {
+      const imgMarkup = `
+        <img src="images/emoji/${evt.target.value}.png" width="55" height="55" alt="emoji">
+      `;
+      const emojiLabelEl = this._details
+        .getElement()
+        .querySelector(`.film-details__add-emoji-label`);
+
+      emojiLabelEl.innerHTML = ``;
+      emojiLabelEl.insertAdjacentHTML(`beforeend`, imgMarkup);
+    };
+
+    const onCommentEnter = (evt) => {
+      if (isEnterPressed(evt.key) && evt.ctrlKey) {
+        const formData = new FormData(this._details
+          .getElement()
+          .querySelector(`.film-details__inner`));
+
+        const comment = {
+          author: `Anonymus`, // delete after 8
+          published: Date.now(),
+          text: formData.get(`comment`),
+          emoji: formData.get(`comment-emoji`),
+        };
+
+        this._initTmpData();
+        this._tmpData.comments.push(comment);
+        this._onDataChange(this._tmpData, this._data);
+        this._resetTmpData();
+      }
+    };
+
     const onCardTogglerClick = (evt) => {
       evt.preventDefault();
 
@@ -82,6 +163,15 @@ class MovieController {
         filmDetailsEl
           .querySelector(`.film-details__comment-input`)
           .addEventListener(`focus`, onCommentFocus);
+        filmDetailsEl
+          .querySelector(`.film-details__controls`)
+          .addEventListener(`input`, onDetailsControlInput);
+        filmDetailsEl
+          .querySelector(`.film-details__emoji-list`)
+          .addEventListener(`input`, onEmojiInput);
+        filmDetailsEl
+          .querySelector(`.film-details__comment-input`)
+          .addEventListener(`keydown`, onCommentEnter);
       }
     };
 
@@ -95,11 +185,13 @@ class MovieController {
           this._tmpData.user.watchlist = !this._tmpData.user.watchlist;
         } else if (evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
           this._tmpData.user.watched = !this._tmpData.user.watched;
+          this._tmpData.user.rating = null;
         } else if (evt.target.classList.contains(`film-card__controls-item--favorite`)) {
-          this._tmpData.user.favorites = !this._tmpData.user.favorites;
+          this._tmpData.user.favorite = !this._tmpData.user.favorite;
         }
 
         this._onDataChange(this._tmpData, this._data, evt.target.closest(`section`));
+        this._resetTmpData();
       }
     };
 

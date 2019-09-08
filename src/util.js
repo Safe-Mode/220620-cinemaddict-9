@@ -2,13 +2,13 @@ const getStats = (films) => {
   return films.reduce((stat, {user}) => {
     stat.watchlist += Number(user.watchlist);
     stat.watched += Number(user.watched);
-    stat.favorites += Number(user.favorites);
+    stat.favorite += Number(user.favorite);
 
     return stat;
   }, {
     watchlist: 0,
     watched: 0,
-    favorites: 0,
+    favorite: 0,
   });
 };
 
@@ -57,4 +57,8 @@ const isEscPressed = (key) => {
   return key === `Escape` || key === `Esc`;
 };
 
-export {getStats, getRank, createElement, render, unrender, isEscPressed};
+const isEnterPressed = (key) => {
+  return key === `Enter`;
+};
+
+export {getStats, getRank, createElement, render, unrender, isEscPressed, isEnterPressed};
