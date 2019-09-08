@@ -13,7 +13,10 @@ class PageController {
     this._filmsToRender = films;
     this._filmsRendered = 0;
     this._sortEl = new Sort().getElement();
-    this._mainListEl = new FilmList(`All movies. Upcoming`, this._films).getElement();
+    this._board = new Films();
+    this._mainList = new FilmList(`All movies. Upcoming`, this._films);
+    this._topList = new FilmList(`Top rated`, this._films, true);
+    this._bandyList = new FilmList(`Most commented`, this._films, true);
     this._showMore = new ShowMore();
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
@@ -21,9 +24,23 @@ class PageController {
 
   _onDataChange(newData, oldData, listEl) {
     const filmIndex = this._films.indexOf(oldData);
+    const restLists = [...this._board
+      .getElement()
+      .querySelectorAll(`section`)]
+      .filter((node) => node !== listEl);
 
     this._films[filmIndex] = newData;
     this._renderCard(listEl, newData, filmIndex);
+
+    restLists.forEach((list) => {
+      list.querySelector(`.films-list__container`).innerHTML = ``;
+
+      if (list.classList.contains(`films-list--extra`)) {
+        this._renderCardsRow(this._filmsToRender, list, CardsPerRow.EXTRA, false, false);
+      } else {
+        this._renderCardsRow(this._films, list, CardsPerRow.MAIN);
+      }
+    });
   }
 
   _onChangeView() {
@@ -93,21 +110,22 @@ class PageController {
   }
 
   init() {
-    const filmsEl = new Films().getElement();
-    const topListEl = new FilmList(`Top rated`, this._films, true).getElement();
-    const bandyListEl = new FilmList(`Most commented`, this._films, true).getElement();
+    const filmsEl = this._board.getElement();
+    const mainListEl = this._mainList.getElement();
+    const topListEl = this._topList.getElement();
+    const bandyListEl = this._bandyList.getElement();
     const showMoreEl = this._showMore.getElement();
     const isMultiRow = this._filmsToRender.length > CardsPerRow.MAIN;
 
-    this._renderCardsRow(this._films, this._mainListEl, CardsPerRow.MAIN);
+    this._renderCardsRow(this._films, mainListEl, CardsPerRow.MAIN);
 
     if (isMultiRow) {
       showMoreEl.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._renderCardsRow(this._filmsToRender, this._mainListEl, CardsPerRow.MAIN);
+        this._renderCardsRow(this._filmsToRender, mainListEl, CardsPerRow.MAIN);
       });
 
-      render(this._mainListEl, showMoreEl);
+      render(mainListEl, showMoreEl);
     }
 
     this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
@@ -115,7 +133,7 @@ class PageController {
     render(this._container, this._sortEl);
     this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false, false);
     this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false, false);
-    render(filmsEl, this._mainListEl);
+    render(filmsEl, mainListEl);
     render(filmsEl, topListEl);
     render(filmsEl, bandyListEl);
     render(this._container, filmsEl);
