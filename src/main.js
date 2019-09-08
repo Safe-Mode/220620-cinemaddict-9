@@ -1,5 +1,5 @@
 import {render} from './util';
-import {PageController} from './components/page';
+import {PageController} from './controllers/page';
 import {Menu} from './components/menu';
 import {Profile} from './components/profile';
 import {Search} from './components/search';

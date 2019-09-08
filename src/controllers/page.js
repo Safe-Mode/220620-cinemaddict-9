@@ -1,11 +1,10 @@
 import {CardsPerRow} from '../const';
-import {render, unrender, isEscPressed} from '../util';
-import {Sort} from './sort';
-import {Films} from './films';
-import {FilmList} from './film-list';
-import {Film} from './film';
-import {FilmDetails} from './film-details';
-import {ShowMore} from './show-more';
+import {render, unrender} from '../util';
+import {Sort} from '../components/sort';
+import {Films} from '../components/films';
+import {FilmList} from '../components/film-list';
+import {ShowMore} from '../components/show-more';
+import {MovieController} from './movie';
 
 class PageController {
   constructor(container, films) {
@@ -18,73 +17,6 @@ class PageController {
     this._showMore = new ShowMore();
   }
 
-  _renderFilmCard(film, filmsListEl) {
-    const bodyEl = document.querySelector(`body`);
-    const filmsListContainerEl = filmsListEl.querySelector(`.films-list__container`);
-    const filmCard = new Film(film);
-    const filmDetails = new FilmDetails(film);
-    const filmCardEl = filmCard.getElement();
-
-    const openPopup = (popup) => {
-      render(bodyEl, popup.getElement());
-      bodyEl.classList.add(`hide-overflow`);
-    };
-
-    const closePopup = (popup) => {
-      unrender(popup.getElement());
-      popup.removeElement();
-      bodyEl.classList.remove(`hide-overflow`);
-    };
-
-    const onEscKeydown = (evt) => {
-      if (isEscPressed(evt.key)) {
-        closePopup(filmDetails);
-        document.removeEventListener(`keydown`, onEscKeydown);
-      }
-    };
-
-    const onCloseBtnClick = (closeEvt) => {
-      closeEvt.preventDefault();
-
-      if (closeEvt.target.classList.contains(`film-details__close-btn`)) {
-        closePopup(filmDetails);
-        document.removeEventListener(`keydown`, onEscKeydown);
-      }
-    };
-
-    const onCommentBlur = () => {
-      document.addEventListener(`keydown`, onEscKeydown);
-    };
-
-    const onCommentFocus = (evt) => {
-      document.removeEventListener(`keydown`, onEscKeydown);
-      evt.target.addEventListener(`blur`, onCommentBlur);
-    };
-
-    const onCardTogglerClick = (evt) => {
-      evt.preventDefault();
-
-      const togglers = [`film-card__poster`, `film-card__title`, `film-card__comments`];
-      const isToggler = togglers.some((cls) => evt.target.classList.contains(cls));
-
-      if (isToggler) {
-        const filmDetailsEl = filmDetails.getElement();
-
-        openPopup(filmDetails);
-
-        document.addEventListener(`keydown`, onEscKeydown);
-        filmDetailsEl.addEventListener(`click`, onCloseBtnClick);
-
-        filmDetailsEl
-          .querySelector(`.film-details__comment-input`)
-          .addEventListener(`focus`, onCommentFocus);
-      }
-    };
-
-    filmCardEl.addEventListener(`click`, onCardTogglerClick);
-    render(filmsListContainerEl, filmCardEl);
-  }
-
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
     const quantity = this._filmsRendered;
     const finishIndex = (isContinues) ? quantity + cardsPerRow : quantity;
@@ -92,7 +24,8 @@ class PageController {
     this._filmsRendered = (isContinues) ? this._filmsRendered : 0;
 
     for (let i = this._filmsRendered; i < finishIndex && i < films.length; i++) {
-      this._renderFilmCard(films[i], listEl);
+      const movie = new MovieController(listEl, films[i]);
+      movie.init();
 
       if (isAdded) {
         this._filmsRendered++;
