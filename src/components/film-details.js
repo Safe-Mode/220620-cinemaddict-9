@@ -2,7 +2,7 @@ import {MIN_PER_HOUR, RADIX_TEN, EMOJIS} from '../const';
 import {AbstractComponent} from './abstract-component';
 
 class FilmDetails extends AbstractComponent {
-  constructor({poster, age, title, rate, director, writers, actors, release, duration, country, genres, description, comments}) {
+  constructor({poster, age, title, rate, director, writers, actors, release, duration, country, genres, description, comments, user: {watchlist, watched, favorites}}) {
     super();
     this._poster = poster;
     this._age = age;
@@ -17,6 +17,9 @@ class FilmDetails extends AbstractComponent {
     this._genres = genres;
     this._description = description;
     this._comments = comments;
+    this._watchlist = watchlist;
+    this._watched = watched;
+    this._favorite = favorites;
   }
 
   getTemplate() {
@@ -85,13 +88,13 @@ class FilmDetails extends AbstractComponent {
             </div>
 
             <section class="film-details__controls">
-              <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+              <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${(this._watchlist) ? `checked` : ``}>
               <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-              <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+              <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${(this._watched) ? `checked` : ``}>
               <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-              <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+              <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${(this._favorite) ? `checked` : ``}>
               <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
             </section>
           </div>

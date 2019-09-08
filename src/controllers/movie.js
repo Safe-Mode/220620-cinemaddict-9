@@ -3,13 +3,23 @@ import {Film} from '../components/film';
 import {FilmDetails} from '../components/film-details';
 
 class MovieController {
-  constructor(container, data, onDataChange, onChangeView) {
+  constructor(container, data, onDataChange, onChangeView, position) {
     this._container = container;
     this._data = data;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
     this._film = new Film(this._data);
     this._details = new FilmDetails(this._data);
+    this._tmpData = null;
+    this._position = position;
+  }
+
+  _initTmpData() {
+    this._tmpData = Object.assign({}, this._data);
+  }
+
+  _resetTmpData() {
+    this._tmpData = null;
   }
 
   init() {
@@ -39,9 +49,8 @@ class MovieController {
     };
 
     const onCloseBtnClick = (closeEvt) => {
-      closeEvt.preventDefault();
-
       if (closeEvt.target.classList.contains(`film-details__close-btn`)) {
+        closeEvt.preventDefault();
         closePopup(this._details);
         document.removeEventListener(`keydown`, onEscKeydown);
       }
@@ -76,15 +85,32 @@ class MovieController {
       }
     };
 
-    const renderFilmCard = () => {
-      const filmsListContainerEl = this._container.querySelector(`.films-list__container`);
-      const filmCardEl = this._film.getElement();
+    const onFilmControlClick = (evt) => {
+      if (evt.target.classList.contains(`film-card__controls-item`)) {
+        evt.preventDefault();
 
-      filmCardEl.addEventListener(`click`, onCardTogglerClick);
-      render(filmsListContainerEl, filmCardEl);
+        this._initTmpData();
+
+        if (evt.target.classList.contains(`film-card__controls-item--add-to-watchlist`)) {
+          this._tmpData.user.watchlist = !this._tmpData.user.watchlist;
+        } else if (evt.target.classList.contains(`film-card__controls-item--mark-as-watched`)) {
+          this._tmpData.user.watched = !this._tmpData.user.watched;
+        } else if (evt.target.classList.contains(`film-card__controls-item--favorite`)) {
+          this._tmpData.user.favorites = !this._tmpData.user.favorites;
+        }
+
+        this._onDataChange(this._tmpData, this._data, evt.target.closest(`section`));
+      }
     };
 
-    renderFilmCard();
+    const filmsListContainerEl = this._container.querySelector(`.films-list__container`);
+    const filmCardEl = this._film.getElement();
+    const filmControlsEl = filmCardEl.querySelector(`.film-card__controls`);
+
+    filmControlsEl.addEventListener(`click`, onFilmControlClick);
+    filmCardEl.addEventListener(`click`, onCardTogglerClick);
+
+    render(filmsListContainerEl, filmCardEl, this._position);
   }
 }
 

@@ -36,6 +36,11 @@ const createElement = (template) => {
 };
 
 const render = (container, element, position = `end`) => {
+  if (typeof position === `number`) {
+    container.replaceChild(element, container.children[position]);
+    return;
+  }
+
   const insert = {
     end: `append`,
     begin: `prepend`,

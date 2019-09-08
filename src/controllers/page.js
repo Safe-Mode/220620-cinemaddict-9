@@ -15,17 +15,35 @@ class PageController {
     this._sortEl = new Sort().getElement();
     this._mainListEl = new FilmList(`All movies. Upcoming`, this._films).getElement();
     this._showMore = new ShowMore();
+    this._onDataChange = this._onDataChange.bind(this);
+    this._onChangeView = this._onChangeView.bind(this);
+  }
+
+  _onDataChange(newData, oldData, listEl) {
+    const filmIndex = this._films.indexOf(oldData);
+
+    this._films[filmIndex] = newData;
+    this._renderCard(listEl, newData, filmIndex);
+  }
+
+  _onChangeView() {
+
+  }
+
+  _renderCard(listEl, film, position) {
+    const movie = new MovieController(listEl, film, this._onDataChange, this._onChangeView, position);
+
+    movie.init();
   }
 
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
     const quantity = this._filmsRendered;
-    const finishIndex = (isContinues) ? quantity + cardsPerRow : quantity;
+    const finishIndex = (isContinues) ? quantity + cardsPerRow : cardsPerRow;
 
     this._filmsRendered = (isContinues) ? this._filmsRendered : 0;
 
     for (let i = this._filmsRendered; i < finishIndex && i < films.length; i++) {
-      const movie = new MovieController(listEl, films[i]);
-      movie.init();
+      this._renderCard(listEl, films[i]);
 
       if (isAdded) {
         this._filmsRendered++;
@@ -95,8 +113,8 @@ class PageController {
     this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
     render(this._container, this._sortEl);
-    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false);
-    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false);
+    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false, false);
+    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false, false);
     render(filmsEl, this._mainListEl);
     render(filmsEl, topListEl);
     render(filmsEl, bandyListEl);
