@@ -27,7 +27,6 @@ class PageController {
   _onDataChange(newData, oldData) {
     const filmIndex = this._films.findIndex((movie) => movie === oldData);
     const boardEl = this._board.getElement();
-
     const lists = [
       ...boardEl.querySelectorAll(`.films-list`),
       ...boardEl.querySelectorAll(`.films-list--extra`)
@@ -37,7 +36,7 @@ class PageController {
 
     lists.forEach((list) => {
       if (filmIndex >= 0 && filmIndex < list.querySelector(`.films-list__container`).children.length) {
-        this._renderCard(list, this._films[filmIndex], filmIndex);
+        this._renderCard(list, this._films[filmIndex], filmIndex, true);
       }
     });
   }
@@ -46,11 +45,20 @@ class PageController {
     this._subscriptions.forEach((subscription) => subscription());
   }
 
-  _renderCard(listEl, film, position) {
+  _renderCard(listEl, film, position, openPopup) {
     const movie = new MovieController(listEl, film, this._onDataChange, this._onChangeView, position);
+    const filmEl = movie.init();
+    const elementIndex = [...document.querySelectorAll(`.film-card`)].indexOf(filmEl);
 
-    movie.init();
-    this._subscriptions.push(movie.setDefaultView.bind(movie));
+    if (openPopup && document.querySelector(`.film-details`)) {
+      movie.openPopup();
+    }
+
+    if (this._subscriptions[elementIndex]) {
+      this._subscriptions[elementIndex] = movie.setDefaultView.bind(movie);
+    } else {
+      this._subscriptions.push(movie.setDefaultView.bind(movie));
+    }
   }
 
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
@@ -130,7 +138,7 @@ class PageController {
       render(mainListEl, showMoreEl);
     }
 
-    this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
+    this._sortEl.addEventListener(`click`, this._onSortLinkClick);
 
     render(this._container, this._sortEl);
     this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false);

@@ -9,8 +9,8 @@ class MovieController {
     this._data = data;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
-    this._film = new Film(this._data);
-    this._details = new FilmDetails(this._data);
+    this._film = new Film(data);
+    this._details = new FilmDetails(data);
     this._tmpData = null;
     this._position = position;
     this._onDataChange = onDataChange;
@@ -25,6 +25,24 @@ class MovieController {
     this._tmpData = null;
   }
 
+  _toggleBodyScroll() {
+    const overflowCls = `hide-overflow`;
+    const clsMethod = (document.body.classList.contains(overflowCls)) ? `remove` : `add`;
+    document.body.classList[clsMethod](overflowCls);
+  }
+
+  openPopup() {
+    this._onChangeView();
+    render(document.body, this._details.getElement());
+    this._toggleBodyScroll();
+  }
+
+  closePopup() {
+    unrender(this._details.getElement());
+    this._details.removeElement();
+    this._toggleBodyScroll();
+  }
+
   setDefaultView() {
     if (document.body.contains(this._details.getElement())) {
       unrender(this._details.getElement());
@@ -33,27 +51,9 @@ class MovieController {
   }
 
   init() {
-    const toggleBodyScroll = () => {
-      const overflowCls = `hide-overflow`;
-      const clsMethod = (document.body.classList.contains(overflowCls)) ? `remove` : `add`;
-      document.body.classList[clsMethod](overflowCls);
-    };
-
-    const openPopup = (popup) => {
-      this._onChangeView();
-      render(this._container, popup.getElement());
-      toggleBodyScroll();
-    };
-
-    const closePopup = (popup) => {
-      unrender(popup.getElement());
-      popup.removeElement();
-      toggleBodyScroll();
-    };
-
     const onEscKeydown = (evt) => {
       if (isEscPressed(evt.key)) {
-        closePopup(this._details);
+        this.closePopup();
         document.removeEventListener(`keydown`, onEscKeydown);
       }
     };
@@ -61,7 +61,7 @@ class MovieController {
     const onCloseBtnClick = (closeEvt) => {
       if (closeEvt.target.classList.contains(`film-details__close-btn`)) {
         closeEvt.preventDefault();
-        closePopup(this._details);
+        this.closePopup();
         document.removeEventListener(`keydown`, onEscKeydown);
       }
     };
@@ -173,28 +173,7 @@ class MovieController {
       const isToggler = togglers.some((cls) => evt.target.classList.contains(cls));
 
       if (isToggler) {
-        const filmDetailsEl = this._details.getElement();
-
-        openPopup(this._details);
-
-        document.addEventListener(`keydown`, onEscKeydown);
-        filmDetailsEl.addEventListener(`click`, onCloseBtnClick);
-
-        filmDetailsEl
-          .querySelector(`.film-details__comment-input`)
-          .addEventListener(`focus`, onCommentFocus);
-        filmDetailsEl
-          .querySelector(`.film-details__controls`)
-          .addEventListener(`input`, onDetailsControlInput);
-        filmDetailsEl
-          .querySelector(`.film-details__emoji-list`)
-          .addEventListener(`input`, onEmojiInput);
-        filmDetailsEl
-          .querySelector(`.film-details__comment-input`)
-          .addEventListener(`keydown`, onCommentEnter);
-        filmDetailsEl
-          .querySelector(`.film-details__comment-delete`)
-          .addEventListener(`click`, onDeleteCommentClick);
+        this.openPopup();
       }
     };
 
@@ -221,11 +200,33 @@ class MovieController {
     const filmsListContainerEl = this._container.querySelector(`.films-list__container`);
     const filmCardEl = this._film.getElement();
     const filmControlsEl = filmCardEl.querySelector(`.film-card__controls`);
+    const filmDetailsEl = this._details.getElement();
+
+    document.addEventListener(`keydown`, onEscKeydown);
+    filmDetailsEl.addEventListener(`click`, onCloseBtnClick);
+
+    filmDetailsEl
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`focus`, onCommentFocus);
+    filmDetailsEl
+      .querySelector(`.film-details__controls`)
+      .addEventListener(`input`, onDetailsControlInput);
+    filmDetailsEl
+      .querySelector(`.film-details__emoji-list`)
+      .addEventListener(`input`, onEmojiInput);
+    filmDetailsEl
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, onCommentEnter);
+    filmDetailsEl
+      .querySelector(`.film-details__comment-delete`)
+      .addEventListener(`click`, onDeleteCommentClick);
 
     filmControlsEl.addEventListener(`click`, onFilmControlClick);
     filmCardEl.addEventListener(`click`, onCardTogglerClick);
 
     render(filmsListContainerEl, filmCardEl, this._position);
+
+    return this._film.getElement();
   }
 }
 
