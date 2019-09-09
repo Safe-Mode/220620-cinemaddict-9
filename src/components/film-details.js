@@ -1,3 +1,4 @@
+// import moment from 'moment';
 import {MIN_PER_HOUR, RADIX_TEN, EMOJIS} from '../const';
 import {AbstractComponent} from './abstract-component';
 
