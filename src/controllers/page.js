@@ -1,3 +1,4 @@
+import {cloneDeep} from 'lodash';
 import {CardsPerRow} from '../const';
 import {render, unrender} from '../util';
 import {Sort} from '../components/sort';
@@ -23,8 +24,8 @@ class PageController {
     this._subscriptions = [];
   }
 
-  _onDataChange(newData, oldData, cb) {
-    const filmIndex = this._films.indexOf(oldData);
+  _onDataChange(newData, oldData) {
+    const filmIndex = this._films.findIndex((movie) => movie === oldData);
     const boardEl = this._board.getElement();
 
     const lists = [
@@ -32,15 +33,11 @@ class PageController {
       ...boardEl.querySelectorAll(`.films-list--extra`)
     ];
 
-    this._films[filmIndex] = newData;
-
-    if (cb) {
-      cb();
-    }
+    this._films[filmIndex] = cloneDeep(newData);
 
     lists.forEach((list) => {
-      if (filmIndex < list.querySelector(`.films-list__container`).children.length) {
-        this._renderCard(list, newData, filmIndex);
+      if (filmIndex >= 0 && filmIndex < list.querySelector(`.films-list__container`).children.length) {
+        this._renderCard(list, this._films[filmIndex], filmIndex);
       }
     });
   }
@@ -57,12 +54,12 @@ class PageController {
   }
 
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
-    let quantity = this._filmsRendered;
-    const finishIndex = (isContinues) ? this._filmsRendered + cardsPerRow : cardsPerRow;
+    const quantity = this._filmsRendered;
+    const finishIndex = (isContinues) ? quantity + cardsPerRow : quantity;
 
-    quantity = (isContinues) ? this._filmsRendered : 0;
+    this._filmsRendered = (isContinues) ? this._filmsRendered : 0;
 
-    for (let i = quantity; i < finishIndex && i < films.length; i++) {
+    for (let i = this._filmsRendered; i < finishIndex && i < films.length; i++) {
       this._renderCard(listEl, films[i]);
 
       if (isAdded) {
@@ -105,7 +102,7 @@ class PageController {
           break;
       }
 
-      this._renderCardsRow(this._filmsToRender, this._mainListEl, CardsPerRow.MAIN, true, false);
+      this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN, true, false);
 
       if (isNewLink) {
         activeLinkEl.classList.remove(activeLinkCls);
@@ -136,8 +133,8 @@ class PageController {
     this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
     render(this._container, this._sortEl);
-    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false, false);
-    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false, false);
+    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false);
+    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false);
     render(filmsEl, mainListEl);
     render(filmsEl, topListEl);
     render(filmsEl, bandyListEl);

@@ -51,11 +51,6 @@ class MovieController {
       toggleBodyScroll();
     };
 
-    const reopenPopup = (popup) => {
-      unrender(popup.getElement());
-      render(this._container, popup.getElement());
-    };
-
     const onEscKeydown = (evt) => {
       if (isEscPressed(evt.key)) {
         closePopup(this._details);
@@ -94,6 +89,10 @@ class MovieController {
       this._initTmpData();
 
       if (evt.target.name === `watched`) {
+        this._tmpData.user.watched = !this._tmpData.user.watched;
+        this._tmpData.user.rating = null;
+        this._onDataChange(this._tmpData, this._data);
+
         if (evt.target.checked) {
           detailsEl
             .querySelector(`.form-details__top-container`)
@@ -109,16 +108,13 @@ class MovieController {
             unrender(detailsMiddleEl);
           }
         }
-
-        this._tmpData.user.watched = !this._tmpData.user.watched;
-        this._tmpData.user.rating = null;
       } else if (evt.target.name === `favorite`) {
         this._tmpData.user.favorite = !this._tmpData.user.favorite;
       } else if (evt.target.name === `watchlist`) {
         this._tmpData.user.watchlist = !this._tmpData.user.watchlist;
       }
 
-      this._onDataChange(this._tmpData, this._data, reopenPopup.bind(this, this._details));
+      this._onDataChange(this._tmpData, this._data);
       this._resetTmpData();
     };
 
@@ -166,7 +162,7 @@ class MovieController {
 
       this._tmpData.comments.splice(commentIndex, 1);
 
-      this._onDataChange(this._tmpData, this._data, reopenPopup.bind(this, this._details));
+      this._onDataChange(this._tmpData, this._data);
       this._resetTmpData();
     };
 
