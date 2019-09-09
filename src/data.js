@@ -55,6 +55,21 @@ const getStringFromRandoms = (array, quantity, separator = ` `, isFirstCapital =
   return result.trim();
 };
 
+const getComments = () => {
+  const texts = getIterableOfRandoms(Fish[`COMMENTS`], 5);
+
+  return texts.map((text) => {
+    return {
+      name: `Anonymous`,
+      published: getRandomFromArray(COMMENTS_DATE_POINTS),
+      text,
+      emoji: getRandomFromArray(EMOJIS),
+    };
+  });
+};
+
+const isWatched = Boolean(Math.round(Math.random()));
+
 const getFilmData = () => {
   return {
     poster: getRandomFromArray(POSTERS),
@@ -64,22 +79,12 @@ const getFilmData = () => {
     duration: getRandomInt(30, 180),
     genres: getIterableOfRandoms(GENRES, 3, true),
     description: getStringFromRandoms(Fish[`DESC`], 5, `. `, false),
-    get comments() {
-      const texts = getIterableOfRandoms(Fish[`COMMENTS`], 5);
-
-      return texts.map((text) => {
-        return {
-          name: `Anonymous`,
-          published: getRandomFromArray(COMMENTS_DATE_POINTS),
-          text,
-          emoji: getRandomFromArray(EMOJIS),
-        };
-      });
-    },
+    comments: getComments(),
     user: {
       watchlist: Boolean(Math.round(Math.random())),
-      watched: Boolean(Math.round(Math.random())),
-      favorites: Boolean(Math.round(Math.random())),
+      watched: isWatched,
+      favorite: Boolean(Math.round(Math.random())),
+      rating: (isWatched) ? getRandomInt(1, 9) : null,
     },
     director: `Anthony Mann`,
     writers: [`Anne Wigton`, `Heinz Herald`, `Richard Weil`],
