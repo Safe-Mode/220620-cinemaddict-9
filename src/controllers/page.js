@@ -62,12 +62,10 @@ class PageController {
   }
 
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
-    const quantity = this._filmsRendered;
-    const finishIndex = (isContinues) ? quantity + cardsPerRow : quantity;
+    const finishIndex = (isContinues) ? this._filmsRendered + cardsPerRow : cardsPerRow;
+    const quantity = (isContinues) ? this._filmsRendered : 0;
 
-    this._filmsRendered = (isContinues) ? this._filmsRendered : 0;
-
-    for (let i = this._filmsRendered; i < finishIndex && i < films.length; i++) {
+    for (let i = quantity; i < finishIndex && i < films.length; i++) {
       this._renderCard(listEl, films[i]);
 
       if (isAdded) {
@@ -141,8 +139,8 @@ class PageController {
     this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
     render(this._container, this._sortEl);
-    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false);
-    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false);
+    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false, false);
+    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false, false);
     render(filmsEl, mainListEl);
     render(filmsEl, topListEl);
     render(filmsEl, bandyListEl);
