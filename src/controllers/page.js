@@ -138,7 +138,7 @@ class PageController {
       render(mainListEl, showMoreEl);
     }
 
-    this._sortEl.addEventListener(`click`, this._onSortLinkClick);
+    this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
     render(this._container, this._sortEl);
     this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false);
