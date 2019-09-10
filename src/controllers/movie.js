@@ -34,7 +34,7 @@ class MovieController {
   _setListeners() {
     const onEscKeydown = (evt) => {
       if (isEscPressed(evt.key)) {
-        this.closePopup();
+        this.setDefaultView();
         document.removeEventListener(`keydown`, onEscKeydown);
       }
     };
@@ -42,7 +42,7 @@ class MovieController {
     const onCloseBtnClick = (closeEvt) => {
       if (closeEvt.target.classList.contains(`film-details__close-btn`)) {
         closeEvt.preventDefault();
-        this.closePopup();
+        this.setDefaultView();
         document.removeEventListener(`keydown`, onEscKeydown);
       }
     };
@@ -144,9 +144,10 @@ class MovieController {
     filmDetailsEl
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`keydown`, onCommentEnter);
+
     filmDetailsEl
-      .querySelector(`.film-details__comment-delete`)
-      .addEventListener(`click`, onDeleteCommentClick);
+      .querySelectorAll(`.film-details__comment-delete`)
+      .forEach((delBtn) => delBtn.addEventListener(`click`, onDeleteCommentClick));
 
     if (filmUserRateEl) {
       filmUserRateEl.addEventListener(`input`, onRatingInput);
@@ -160,16 +161,11 @@ class MovieController {
     this._toggleBodyScroll();
   }
 
-  closePopup() {
-    unrender(this._details.getElement());
-    this._details.removeElement();
-    this._toggleBodyScroll();
-  }
-
   setDefaultView() {
     if (document.body.contains(this._details.getElement())) {
       unrender(this._details.getElement());
       this._details.removeElement();
+      this._toggleBodyScroll();
     }
   }
 
