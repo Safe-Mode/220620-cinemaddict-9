@@ -98,7 +98,7 @@ class MovieController {
           .querySelector(`.film-details__inner`));
 
         const comment = {
-          author: `Anonymus`, // delete after 8
+          name: `Anonymous`, // delete after 8
           published: Date.now(),
           text: formData.get(`comment`),
           emoji: formData.get(`comment-emoji`),
