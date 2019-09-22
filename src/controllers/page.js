@@ -117,6 +117,18 @@ class PageController {
     }
   }
 
+  show() {
+    this._board
+      .getElement()
+      .classList.remove(`visually-hidden`);
+  }
+
+  hide() {
+    this._board
+      .getElement()
+      .classList.add(`visually-hidden`);
+  }
+
   init() {
     const filmsEl = this._board.getElement();
     const mainListEl = this._mainList.getElement();
