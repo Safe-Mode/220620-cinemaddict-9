@@ -1,11 +1,10 @@
-import {cloneDeep} from 'lodash';
 import {CardsPerRow} from '../const';
 import {render, unrender} from '../util';
 import {Sort} from '../components/sort';
 import {Films} from '../components/films';
 import {FilmList} from '../components/film-list';
+import {FilmListController} from '../controllers/film-list';
 import {ShowMore} from '../components/show-more';
-import {MovieController} from './movie';
 
 class PageController {
   constructor(container, films) {
@@ -18,47 +17,8 @@ class PageController {
     this._mainList = new FilmList(`All movies. Upcoming`, this._films);
     this._topList = new FilmList(`Top rated`, this._films, true);
     this._bandyList = new FilmList(`Most commented`, this._films, true);
+    this._filmListController = new FilmListController(this._board.getElement(), this._films);
     this._showMore = new ShowMore();
-    this._onDataChange = this._onDataChange.bind(this);
-    this._onChangeView = this._onChangeView.bind(this);
-    this._subscriptions = [];
-  }
-
-  _onDataChange(newData, oldData) {
-    const filmIndex = this._films.findIndex((movie) => movie === oldData);
-    const boardEl = this._board.getElement();
-    const lists = [
-      ...boardEl.querySelectorAll(`.films-list`),
-      ...boardEl.querySelectorAll(`.films-list--extra`)
-    ];
-
-    this._films[filmIndex] = cloneDeep(newData);
-
-    lists.forEach((list) => {
-      if (filmIndex >= 0 && filmIndex < list.querySelector(`.films-list__container`).children.length) {
-        this._renderCard(list, this._films[filmIndex], filmIndex, true);
-      }
-    });
-  }
-
-  _onChangeView() {
-    this._subscriptions.forEach((subscription) => subscription());
-  }
-
-  _renderCard(listEl, film, position, openPopup) {
-    const movie = new MovieController(listEl, film, this._onDataChange, this._onChangeView, position);
-    const filmEl = movie.init();
-    const elementIndex = [...document.querySelectorAll(`.film-card`)].indexOf(filmEl);
-
-    if (openPopup && document.querySelector(`.film-details`)) {
-      movie.openPopup();
-    }
-
-    if (this._subscriptions[elementIndex]) {
-      this._subscriptions[elementIndex] = movie.setDefaultView.bind(movie);
-    } else {
-      this._subscriptions.push(movie.setDefaultView.bind(movie));
-    }
   }
 
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
@@ -66,7 +26,7 @@ class PageController {
     const quantity = (isContinues) ? this._filmsRendered : 0;
 
     for (let i = quantity; i < finishIndex && i < films.length; i++) {
-      this._renderCard(listEl, films[i]);
+      this._filmListController.renderCard(listEl, films[i]);
 
       if (isAdded) {
         this._filmsRendered++;

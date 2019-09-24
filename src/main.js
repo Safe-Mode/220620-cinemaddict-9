@@ -3,6 +3,7 @@ import {PageController} from './controllers/page';
 import {Menu} from './components/menu';
 import {Profile} from './components/profile';
 import {Search} from './components/search';
+import {SearchController} from './controllers/search';
 import {Stat} from './components/stat';
 import {films, amount, rankMap} from './data';
 
@@ -11,6 +12,9 @@ const mainEl = document.querySelector(`.main`);
 const page = new PageController(mainEl, films);
 const menu = new Menu(films);
 const stats = new Stat();
+const search = new Search();
+const searchEl = search.getElement();
+const searchController = new SearchController(mainEl, films);
 
 menu
   .getElement()
@@ -33,7 +37,11 @@ menu
     }
   });
 
-render(headerEl, new Search().getElement());
+searchEl.addEventListener(`focus`, () => {
+  searchController.init();
+});
+
+render(headerEl, searchEl);
 render(headerEl, new Profile(amount, rankMap).getElement());
 render(mainEl, menu.getElement());
 render(mainEl, stats.getElement());
