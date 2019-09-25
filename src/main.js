@@ -1,3 +1,4 @@
+import {SEARCH_MIN_LENGTH} from './const';
 import {render} from './util';
 import {PageController} from './controllers/page';
 import {Menu} from './components/menu';
@@ -14,7 +15,15 @@ const menu = new Menu(films);
 const stats = new Stat();
 const search = new Search();
 const searchEl = search.getElement();
-const searchController = new SearchController(mainEl, films);
+let searchController = null;
+
+const hideSearchBoard = () => {
+  if (searchController) {
+    menu.getElement().classList.remove(`visually-hidden`);
+    page.show();
+    searchController.hide();
+  }
+};
 
 menu
   .getElement()
@@ -37,9 +46,24 @@ menu
     }
   });
 
-searchEl.addEventListener(`focus`, () => {
-  searchController.init();
-});
+searchEl
+  .querySelector(`.search__field`)
+  .addEventListener(`input`, (evt) => {
+    const value = evt.target.value.toLowerCase();
+    const searchFilms = films.filter((film) => film.title.toLowerCase().includes(value));
+
+    if (value.length >= SEARCH_MIN_LENGTH) {
+      menu.getElement().classList.add(`visually-hidden`);
+      page.hide();
+      searchController = new SearchController(mainEl, searchFilms, search);
+      searchController.init();
+      searchController.show();
+    } else {
+      hideSearchBoard();
+    }
+  });
+
+searchEl.addEventListener(`reset`, () => hideSearchBoard);
 
 render(headerEl, searchEl);
 render(headerEl, new Profile(amount, rankMap).getElement());

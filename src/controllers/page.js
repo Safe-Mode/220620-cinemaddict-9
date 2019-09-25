@@ -12,7 +12,7 @@ class PageController {
     this._films = films;
     this._filmsToRender = films;
     this._filmsRendered = 0;
-    this._sortEl = new Sort().getElement();
+    this._sort = new Sort();
     this._board = new Films();
     this._mainList = new FilmList(`All movies. Upcoming`, this._films);
     this._topList = new FilmList(`Top rated`, this._films, true);
@@ -49,7 +49,9 @@ class PageController {
 
     if (type) {
       const filmsCopy = this._films.slice();
-      const activeLinkEl = this._sortEl.querySelector(`.${activeLinkCls}`);
+      const activeLinkEl = this._sort
+        .getElement()
+        .querySelector(`.${activeLinkCls}`);
       const filmsListContainerEl = this._mainList
         .getElement()
         .querySelector(`.films-list__container`);
@@ -78,12 +80,18 @@ class PageController {
   }
 
   show() {
+    this._sort
+      .getElement()
+      .classList.remove(`visually-hidden`);
     this._board
       .getElement()
       .classList.remove(`visually-hidden`);
   }
 
   hide() {
+    this._sort
+      .getElement()
+      .classList.add(`visually-hidden`);
     this._board
       .getElement()
       .classList.add(`visually-hidden`);
@@ -108,9 +116,11 @@ class PageController {
       render(mainListEl, showMoreEl);
     }
 
-    this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
+    this._sort
+      .getElement()
+      .addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
-    render(this._container, this._sortEl);
+    render(this._container, this._sort.getElement());
     this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false, false);
     this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false, false);
     render(filmsEl, mainListEl);

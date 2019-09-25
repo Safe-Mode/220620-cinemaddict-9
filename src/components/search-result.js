@@ -6,7 +6,7 @@ class SearchResult extends AbstractComponent {
     this._count = count;
   }
 
-  getElement() {
+  getTemplate() {
     return `
       <div class="result">
         <p class="result__text">Result <span class="result__count">${this._count}</span></p>
