@@ -1,4 +1,4 @@
-import {render} from '../util';
+import {render, unrender} from '../util';
 import {Films} from '../components/films';
 import {FilmList} from '../components/film-list';
 import {SearchResult} from './../components/search-result';
@@ -17,37 +17,34 @@ class SearchController {
   }
 
   show() {
-    this._searchResult
-      .getElement()
-      .classList.remove(`visually-hidden`);
-    this._board
-      .getElement()
-      .classList.remove(`visually-hidden`);
+    render(this._container, this._searchResult.getElement());
+    render(this._container, this._board.getElement());
   }
 
   hide() {
-    this._searchResult
-      .getElement()
-      .classList.add(`visually-hidden`);
-    this._board
-      .getElement()
-      .classList.add(`visually-hidden`);
+    unrender(this._searchResult.getElement());
+    unrender(this._board.getElement());
   }
 
   init() {
     const filmListEl = this._filmList.getElement();
+    const searchResultEl = this._searchResult.getElement();
+    const boardEl = this._board.getElement();
 
-    // if (this._count) {
-    //   this._container.innerHTML = ``;
-    // }
+    if (this._container.contains(searchResultEl)) {
+      searchResultEl.remove();
+      this._searchResult.removeElement();
+      boardEl.remove();
+      this._board.removeElement();
+    }
 
     this._films.forEach((film) => {
       this._filmListController.renderCard(this._filmList.getElement(), film);
     });
 
-    render(this._container, this._searchResult.getElement());
-    render(this._container, this._board.getElement());
-    render(this._board.getElement(), filmListEl);
+    render(this._container, searchResultEl);
+    render(this._container, boardEl);
+    render(boardEl, filmListEl);
   }
 }
 

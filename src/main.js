@@ -1,5 +1,5 @@
 import {SEARCH_MIN_LENGTH} from './const';
-import {render} from './util';
+import {render, unrender} from './util';
 import {PageController} from './controllers/page';
 import {Menu} from './components/menu';
 import {Profile} from './components/profile';
@@ -12,14 +12,20 @@ const headerEl = document.querySelector(`.header`);
 const mainEl = document.querySelector(`.main`);
 const page = new PageController(mainEl, films);
 const menu = new Menu(films);
+const menuEl = menu.getElement();
 const stats = new Stat();
+const statsEl = stats.getElement();
 const search = new Search();
 const searchEl = search.getElement();
 let searchController = null;
 
+const clearMainEl = () => {
+  mainEl.innerHTML = ``;
+};
+
 const hideSearchBoard = () => {
   if (searchController) {
-    menu.getElement().classList.remove(`visually-hidden`);
+    render(mainEl, menuEl);
     page.show();
     searchController.hide();
   }
@@ -36,12 +42,12 @@ menu
 
     switch (evt.target.hash) {
       case `#all`:
-        stats.getElement().classList.add(`visually-hidden`);
+        unrender(statsEl);
         page.show();
         break;
       case `#stats`:
         page.hide();
-        stats.getElement().classList.remove(`visually-hidden`);
+        render(mainEl, statsEl);
         break;
     }
   });
@@ -53,8 +59,13 @@ searchEl
     const searchFilms = films.filter((film) => film.title.toLowerCase().includes(value));
 
     if (value.length >= SEARCH_MIN_LENGTH) {
-      menu.getElement().classList.add(`visually-hidden`);
-      page.hide();
+      if (searchController) {
+        clearMainEl();
+      } else {
+        unrender(menuEl);
+        page.hide();
+      }
+
       searchController = new SearchController(mainEl, searchFilms, search);
       searchController.init();
       searchController.show();
@@ -63,11 +74,9 @@ searchEl
     }
   });
 
-searchEl.addEventListener(`reset`, () => hideSearchBoard);
+searchEl.addEventListener(`reset`, hideSearchBoard);
 
 render(headerEl, searchEl);
 render(headerEl, new Profile(amount, rankMap).getElement());
-render(mainEl, menu.getElement());
-render(mainEl, stats.getElement());
-stats.getElement().classList.add(`visually-hidden`);
+render(mainEl, menuEl);
 page.init();

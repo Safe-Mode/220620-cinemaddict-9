@@ -80,21 +80,13 @@ class PageController {
   }
 
   show() {
-    this._sort
-      .getElement()
-      .classList.remove(`visually-hidden`);
-    this._board
-      .getElement()
-      .classList.remove(`visually-hidden`);
+    render(this._container, this._sort.getElement());
+    render(this._container, this._board.getElement());
   }
 
   hide() {
-    this._sort
-      .getElement()
-      .classList.add(`visually-hidden`);
-    this._board
-      .getElement()
-      .classList.add(`visually-hidden`);
+    unrender(this._sort.getElement());
+    unrender(this._board.getElement());
   }
 
   init() {
