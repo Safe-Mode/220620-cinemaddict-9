@@ -1,11 +1,10 @@
-import {cloneDeep} from 'lodash';
 import {CardsPerRow} from '../const';
 import {render, unrender} from '../util';
 import {Sort} from '../components/sort';
 import {Films} from '../components/films';
 import {FilmList} from '../components/film-list';
+import {FilmListController} from '../controllers/film-list';
 import {ShowMore} from '../components/show-more';
-import {MovieController} from './movie';
 
 class PageController {
   constructor(container, films) {
@@ -13,54 +12,21 @@ class PageController {
     this._films = films;
     this._filmsToRender = films;
     this._filmsRendered = 0;
-    this._sortEl = new Sort().getElement();
+    this._sort = new Sort();
     this._board = new Films();
     this._mainList = new FilmList(`All movies. Upcoming`, this._films);
     this._topList = new FilmList(`Top rated`, this._films, true);
     this._bandyList = new FilmList(`Most commented`, this._films, true);
+    this._filmListController = new FilmListController(this._board.getElement(), this._films);
     this._showMore = new ShowMore();
-    this._onDataChange = this._onDataChange.bind(this);
-    this._onChangeView = this._onChangeView.bind(this);
-    this._subscriptions = [];
-  }
-
-  _onDataChange(newData, oldData) {
-    const filmIndex = this._films.findIndex((movie) => movie === oldData);
-    const boardEl = this._board.getElement();
-
-    const lists = [
-      ...boardEl.querySelectorAll(`.films-list`),
-      ...boardEl.querySelectorAll(`.films-list--extra`)
-    ];
-
-    this._films[filmIndex] = cloneDeep(newData);
-
-    lists.forEach((list) => {
-      if (filmIndex >= 0 && filmIndex < list.querySelector(`.films-list__container`).children.length) {
-        this._renderCard(list, this._films[filmIndex], filmIndex);
-      }
-    });
-  }
-
-  _onChangeView() {
-    this._subscriptions.forEach((subscription) => subscription());
-  }
-
-  _renderCard(listEl, film, position) {
-    const movie = new MovieController(listEl, film, this._onDataChange, this._onChangeView, position);
-
-    movie.init();
-    this._subscriptions.push(movie.setDefaultView.bind(movie));
   }
 
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
-    const quantity = this._filmsRendered;
-    const finishIndex = (isContinues) ? quantity + cardsPerRow : quantity;
+    const finishIndex = (isContinues) ? this._filmsRendered + cardsPerRow : cardsPerRow;
+    const quantity = (isContinues) ? this._filmsRendered : 0;
 
-    this._filmsRendered = (isContinues) ? this._filmsRendered : 0;
-
-    for (let i = this._filmsRendered; i < finishIndex && i < films.length; i++) {
-      this._renderCard(listEl, films[i]);
+    for (let i = quantity; i < finishIndex && i < films.length; i++) {
+      this._filmListController.renderCard(listEl, films[i]);
 
       if (isAdded) {
         this._filmsRendered++;
@@ -83,7 +49,9 @@ class PageController {
 
     if (type) {
       const filmsCopy = this._films.slice();
-      const activeLinkEl = this._sortEl.querySelector(`.${activeLinkCls}`);
+      const activeLinkEl = this._sort
+        .getElement()
+        .querySelector(`.${activeLinkCls}`);
       const filmsListContainerEl = this._mainList
         .getElement()
         .querySelector(`.films-list__container`);
@@ -111,6 +79,16 @@ class PageController {
     }
   }
 
+  show() {
+    render(this._container, this._sort.getElement());
+    render(this._container, this._board.getElement());
+  }
+
+  hide() {
+    unrender(this._sort.getElement());
+    unrender(this._board.getElement());
+  }
+
   init() {
     const filmsEl = this._board.getElement();
     const mainListEl = this._mainList.getElement();
@@ -130,11 +108,13 @@ class PageController {
       render(mainListEl, showMoreEl);
     }
 
-    this._sortEl.addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
+    this._sort
+      .getElement()
+      .addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
-    render(this._container, this._sortEl);
-    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false);
-    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false);
+    render(this._container, this._sort.getElement());
+    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false, false);
+    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false, false);
     render(filmsEl, mainListEl);
     render(filmsEl, topListEl);
     render(filmsEl, bandyListEl);

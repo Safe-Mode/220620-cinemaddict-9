@@ -9,8 +9,8 @@ class MovieController {
     this._data = data;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
-    this._film = new Film(this._data);
-    this._details = new FilmDetails(this._data);
+    this._film = new Film(data);
+    this._details = new FilmDetails(data);
     this._tmpData = null;
     this._position = position;
     this._onDataChange = onDataChange;
@@ -25,35 +25,16 @@ class MovieController {
     this._tmpData = null;
   }
 
-  setDefaultView() {
-    if (document.body.contains(this._details.getElement())) {
-      unrender(this._details.getElement());
-      this._details.removeElement();
-    }
+  _toggleBodyScroll() {
+    const overflowCls = `hide-overflow`;
+    const clsMethod = (document.body.classList.contains(overflowCls)) ? `remove` : `add`;
+    document.body.classList[clsMethod](overflowCls);
   }
 
-  init() {
-    const toggleBodyScroll = () => {
-      const overflowCls = `hide-overflow`;
-      const clsMethod = (document.body.classList.contains(overflowCls)) ? `remove` : `add`;
-      document.body.classList[clsMethod](overflowCls);
-    };
-
-    const openPopup = (popup) => {
-      this._onChangeView();
-      render(this._container, popup.getElement());
-      toggleBodyScroll();
-    };
-
-    const closePopup = (popup) => {
-      unrender(popup.getElement());
-      popup.removeElement();
-      toggleBodyScroll();
-    };
-
+  _setListeners() {
     const onEscKeydown = (evt) => {
       if (isEscPressed(evt.key)) {
-        closePopup(this._details);
+        this.setDefaultView();
         document.removeEventListener(`keydown`, onEscKeydown);
       }
     };
@@ -61,7 +42,7 @@ class MovieController {
     const onCloseBtnClick = (closeEvt) => {
       if (closeEvt.target.classList.contains(`film-details__close-btn`)) {
         closeEvt.preventDefault();
-        closePopup(this._details);
+        this.setDefaultView();
         document.removeEventListener(`keydown`, onEscKeydown);
       }
     };
@@ -83,31 +64,11 @@ class MovieController {
     };
 
     const onDetailsControlInput = (evt) => {
-      const detailsEl = this._details.getElement();
-      const detailsMiddleEl = detailsEl.querySelector(`.form-details__middle-container`);
-
       this._initTmpData();
 
       if (evt.target.name === `watched`) {
         this._tmpData.user.watched = !this._tmpData.user.watched;
         this._tmpData.user.rating = null;
-        this._onDataChange(this._tmpData, this._data);
-
-        if (evt.target.checked) {
-          detailsEl
-            .querySelector(`.form-details__top-container`)
-            .insertAdjacentHTML(`afterend`, this._details.getRatingTemplate());
-
-          const filmUserRatingEl = this._details
-            .getElement()
-            .querySelector(`.film-details__user-rating-score`);
-
-          filmUserRatingEl.addEventListener(`input`, onRatingInput);
-        } else {
-          if (detailsEl.contains(detailsMiddleEl)) {
-            unrender(detailsMiddleEl);
-          }
-        }
       } else if (evt.target.name === `favorite`) {
         this._tmpData.user.favorite = !this._tmpData.user.favorite;
       } else if (evt.target.name === `watchlist`) {
@@ -137,7 +98,7 @@ class MovieController {
           .querySelector(`.film-details__inner`));
 
         const comment = {
-          author: `Anonymus`, // delete after 8
+          name: `Anonymous`, // delete after 8
           published: Date.now(),
           text: formData.get(`comment`),
           emoji: formData.get(`comment-emoji`),
@@ -161,43 +122,54 @@ class MovieController {
         .indexOf(evt.target.closest(`li`));
 
       this._tmpData.comments.splice(commentIndex, 1);
-
       this._onDataChange(this._tmpData, this._data);
       this._resetTmpData();
     };
 
-    const onCardTogglerClick = (evt) => {
-      evt.preventDefault();
+    const filmDetailsEl = this._details.getElement();
+    const filmUserRateEl = filmDetailsEl.querySelector(`.film-details__user-rating-score`);
 
-      const togglers = [`film-card__poster`, `film-card__title`, `film-card__comments`];
-      const isToggler = togglers.some((cls) => evt.target.classList.contains(cls));
+    document.addEventListener(`keydown`, onEscKeydown);
+    filmDetailsEl.addEventListener(`click`, onCloseBtnClick);
 
-      if (isToggler) {
-        const filmDetailsEl = this._details.getElement();
+    filmDetailsEl
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`focus`, onCommentFocus);
+    filmDetailsEl
+      .querySelector(`.film-details__controls`)
+      .addEventListener(`input`, onDetailsControlInput);
+    filmDetailsEl
+      .querySelector(`.film-details__emoji-list`)
+      .addEventListener(`input`, onEmojiInput);
+    filmDetailsEl
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, onCommentEnter);
 
-        openPopup(this._details);
+    filmDetailsEl
+      .querySelectorAll(`.film-details__comment-delete`)
+      .forEach((delBtn) => delBtn.addEventListener(`click`, onDeleteCommentClick));
 
-        document.addEventListener(`keydown`, onEscKeydown);
-        filmDetailsEl.addEventListener(`click`, onCloseBtnClick);
+    if (filmUserRateEl) {
+      filmUserRateEl.addEventListener(`input`, onRatingInput);
+    }
+  }
 
-        filmDetailsEl
-          .querySelector(`.film-details__comment-input`)
-          .addEventListener(`focus`, onCommentFocus);
-        filmDetailsEl
-          .querySelector(`.film-details__controls`)
-          .addEventListener(`input`, onDetailsControlInput);
-        filmDetailsEl
-          .querySelector(`.film-details__emoji-list`)
-          .addEventListener(`input`, onEmojiInput);
-        filmDetailsEl
-          .querySelector(`.film-details__comment-input`)
-          .addEventListener(`keydown`, onCommentEnter);
-        filmDetailsEl
-          .querySelector(`.film-details__comment-delete`)
-          .addEventListener(`click`, onDeleteCommentClick);
-      }
-    };
+  openPopup() {
+    this._onChangeView();
+    this._setListeners();
+    render(document.body, this._details.getElement());
+    this._toggleBodyScroll();
+  }
 
+  setDefaultView() {
+    if (document.body.contains(this._details.getElement())) {
+      unrender(this._details.getElement());
+      this._details.removeElement();
+      this._toggleBodyScroll();
+    }
+  }
+
+  init() {
     const onFilmControlClick = (evt) => {
       if (evt.target.classList.contains(`film-card__controls-item`)) {
         evt.preventDefault();
@@ -218,14 +190,26 @@ class MovieController {
       }
     };
 
+    const onCardTogglerClick = (evt) => {
+      evt.preventDefault();
+
+      const togglers = [`film-card__poster`, `film-card__title`, `film-card__comments`];
+      const isToggler = togglers.some((cls) => evt.target.classList.contains(cls));
+
+      if (isToggler) {
+        this.openPopup();
+      }
+    };
+
     const filmsListContainerEl = this._container.querySelector(`.films-list__container`);
     const filmCardEl = this._film.getElement();
     const filmControlsEl = filmCardEl.querySelector(`.film-card__controls`);
 
     filmControlsEl.addEventListener(`click`, onFilmControlClick);
     filmCardEl.addEventListener(`click`, onCardTogglerClick);
-
     render(filmsListContainerEl, filmCardEl, this._position);
+
+    return this._film.getElement();
   }
 }
 
