@@ -4,10 +4,11 @@ import {render, unrender} from '../util';
 import {Stat} from '../components/stat';
 
 class StatController {
-  constructor(container, films) {
+  constructor(container, films, rank) {
     this._container = container;
     this._films = films;
-    this._stat = new Stat();
+    this._rank = rank;
+    this._stat = new Stat(this._films, this._rank);
     this._chart = null;
   }
 

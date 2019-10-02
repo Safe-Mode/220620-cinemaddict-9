@@ -1,13 +1,23 @@
-import {AbstractComponent} from "./abstract-component";
+import {MIN_PER_HOUR} from '../const';
+import {AbstractComponent} from './abstract-component';
 
 class Stat extends AbstractComponent {
+  constructor(films, rank) {
+    super();
+    this._films = films;
+    this._rank = rank;
+    this._totalDuration = this._films.reduce((duration, film) => {
+      return duration + film.duration;
+    }, 0);
+  }
+
   getTemplate() {
     return `
       <section class="statistic">
         <p class="statistic__rank">
           Your rank
           <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-          <span class="statistic__rank-label">Sci-Fighter</span>
+          <span class="statistic__rank-label">${this._rank}</span>
         </p>
 
         <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -32,11 +42,11 @@ class Stat extends AbstractComponent {
         <ul class="statistic__text-list">
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">You watched</h4>
-            <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+            <p class="statistic__item-text">${this._films.length} <span class="statistic__item-description">movies</span></p>
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Total duration</h4>
-            <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+            <p class="statistic__item-text">${(this._totalDuration / MIN_PER_HOUR).toFixed()} <span class="statistic__item-description">h</span> ${this._totalDuration % MIN_PER_HOUR} <span class="statistic__item-description">m</span></p>
           </li>
           <li class="statistic__text-item">
             <h4 class="statistic__item-title">Top genre</h4>

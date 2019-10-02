@@ -1,19 +1,21 @@
 import {SEARCH_MIN_LENGTH} from './const';
-import {render, unrender} from './util';
+import {render, unrender, getRank} from './util';
 import {PageController} from './controllers/page';
 import {Menu} from './components/menu';
 import {Profile} from './components/profile';
 import {Search} from './components/search';
 import {SearchController} from './controllers/search';
 import {StatController} from './controllers/stat';
-import {films, amount, rankMap} from './data';
+import {films, rankMap} from './data';
 
+const watched = films.filter(({user}) => user.watched);
+const rank = getRank(watched.length, rankMap);
 const headerEl = document.querySelector(`.header`);
 const mainEl = document.querySelector(`.main`);
 const page = new PageController(mainEl, films);
 const menu = new Menu(films);
 const menuEl = menu.getElement();
-const stats = new StatController(mainEl, films);
+const stats = new StatController(mainEl, watched, rank);
 const search = new Search();
 const searchEl = search.getElement();
 let searchController = null;
@@ -76,7 +78,7 @@ searchEl
 searchEl.addEventListener(`reset`, hideSearchBoard);
 
 render(headerEl, searchEl);
-render(headerEl, new Profile(amount, rankMap).getElement());
+render(headerEl, new Profile(rank).getElement());
 render(mainEl, menuEl);
 stats.init();
 page.init();

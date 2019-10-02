@@ -1,10 +1,9 @@
-import {getRank} from '../util';
 import {AbstractComponent} from './abstract-component';
 
 class Profile extends AbstractComponent {
-  constructor(amount, rankMap) {
+  constructor(rank) {
     super();
-    this._rank = getRank(amount, rankMap);
+    this._rank = rank;
   }
 
   getTemplate() {
