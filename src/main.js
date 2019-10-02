@@ -78,4 +78,5 @@ searchEl.addEventListener(`reset`, hideSearchBoard);
 render(headerEl, searchEl);
 render(headerEl, new Profile(amount, rankMap).getElement());
 render(mainEl, menuEl);
+stats.init();
 page.init();
