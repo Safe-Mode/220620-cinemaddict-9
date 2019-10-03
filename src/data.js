@@ -85,6 +85,7 @@ const getFilmData = () => {
       watched: isWatched,
       favorite: Boolean(Math.round(Math.random())),
       rating: (isWatched) ? getRandomInt(1, 9) : null,
+      watchingDate: getRandomInt(Date.now() - 31536000000, 1567088703157),
     },
     director: `Anthony Mann`,
     writers: [`Anne Wigton`, `Heinz Herald`, `Richard Weil`],

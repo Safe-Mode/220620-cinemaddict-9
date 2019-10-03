@@ -1,20 +1,21 @@
 import {SEARCH_MIN_LENGTH} from './const';
-import {render, unrender} from './util';
+import {render, unrender, getRank} from './util';
 import {PageController} from './controllers/page';
 import {Menu} from './components/menu';
 import {Profile} from './components/profile';
 import {Search} from './components/search';
 import {SearchController} from './controllers/search';
-import {Stat} from './components/stat';
-import {films, amount, rankMap} from './data';
+import {StatController} from './controllers/stat';
+import {films, rankMap} from './data';
 
+const watched = films.filter(({user}) => user.watched);
+const rank = getRank(watched.length, rankMap);
 const headerEl = document.querySelector(`.header`);
 const mainEl = document.querySelector(`.main`);
 const page = new PageController(mainEl, films);
 const menu = new Menu(films);
 const menuEl = menu.getElement();
-const stats = new Stat();
-const statsEl = stats.getElement();
+const stats = new StatController(mainEl, watched, rank);
 const search = new Search();
 const searchEl = search.getElement();
 let searchController = null;
@@ -26,7 +27,7 @@ const clearMainEl = () => {
 const hideSearchBoard = () => {
   if (searchController) {
     render(mainEl, menuEl);
-    page.show();
+    page.show(films);
     searchController.hide();
   }
 };
@@ -40,15 +41,41 @@ menu
       return;
     }
 
+    let filtered = [];
+    const activeLinkCls = `main-navigation__item--active`;
+    const activeLinkEl = menuEl.querySelector(`.${activeLinkCls}`);
+    const isNewLink = activeLinkEl !== evt.target;
+
+    const updateFilms = (newFilms) => {
+      stats.hide();
+      page.show(newFilms);
+    };
+
     switch (evt.target.hash) {
       case `#all`:
-        unrender(statsEl);
-        page.show();
+        updateFilms(films);
+        break;
+      case `#watchlist`:
+        filtered = films.filter(({user}) => user.watchlist);
+        updateFilms(filtered);
+        break;
+      case `#history`:
+        filtered = films.filter(({user}) => user.watched);
+        updateFilms(filtered);
+        break;
+      case `#favorites`:
+        filtered = films.filter(({user}) => user.favorite);
+        updateFilms(filtered);
         break;
       case `#stats`:
         page.hide();
-        render(mainEl, statsEl);
+        stats.show();
         break;
+    }
+
+    if (isNewLink) {
+      activeLinkEl.classList.remove(activeLinkCls);
+      evt.target.classList.add(activeLinkCls);
     }
   });
 
@@ -77,6 +104,7 @@ searchEl
 searchEl.addEventListener(`reset`, hideSearchBoard);
 
 render(headerEl, searchEl);
-render(headerEl, new Profile(amount, rankMap).getElement());
+render(headerEl, new Profile(rank).getElement());
 render(mainEl, menuEl);
+stats.init();
 page.init();
