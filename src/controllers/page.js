@@ -1,3 +1,4 @@
+import {cloneDeep} from 'lodash';
 import {CardsPerRow} from '../const';
 import {render, unrender} from '../util';
 import {Sort} from '../components/sort';
@@ -21,13 +22,13 @@ class PageController {
     this._showMore = new ShowMore();
   }
 
-  _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
+  _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = false) {
     const mainListEl = this._mainList.getElement();
     const showMoreEl = this._showMore.getElement();
+    const startIndex = (isContinues) ? this._filmsRendered : 0;
     const finishIndex = (isContinues) ? this._filmsRendered + cardsPerRow : cardsPerRow;
-    const quantity = (isContinues) ? this._filmsRendered : 0;
 
-    for (let i = quantity; i < finishIndex && i < films.length; i++) {
+    for (let i = startIndex; i < finishIndex && i < films.length; i++) {
       this._filmListController.renderCard(listEl, films[i]);
 
       if (isAdded) {
@@ -52,19 +53,19 @@ class PageController {
     const activeLinkCls = `sort__button--active`;
 
     if (type) {
-      const filmsCopy = this._films.slice();
+      const filmsCopy = cloneDeep(this._films);
       const activeLinkEl = this._sort
         .getElement()
         .querySelector(`.${activeLinkCls}`);
-      const filmsListContainerEl = this._mainList
-        .getElement()
-        .querySelector(`.films-list__container`);
       const isNewLink = activeLinkEl !== evt.target;
-      filmsListContainerEl.innerHTML = ``;
+      const mainListEl = this._mainList.getElement();
+
+      this._filmsRendered = 0;
+      mainListEl.querySelector(`.films-list__container`).innerHTML = ``;
 
       switch (type) {
         case `default`:
-          this._filmsToRender = this._films;
+          this._filmsToRender = filmsCopy;
           break;
         case `date`:
           this._filmsToRender = filmsCopy.sort((filmA, filmB) => filmB.release - filmA.release);
@@ -74,7 +75,7 @@ class PageController {
           break;
       }
 
-      this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN, false, true);
+      this._renderCardsRow(this._filmsToRender, mainListEl, CardsPerRow.MAIN);
 
       if (isNewLink) {
         activeLinkEl.classList.remove(activeLinkCls);
@@ -115,7 +116,7 @@ class PageController {
     if (isMultiRow) {
       showMoreEl.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN);
+        this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN, true, true);
       });
 
       render(mainListEl, showMoreEl);
@@ -126,8 +127,8 @@ class PageController {
       .addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
     render(this._container, this._sort.getElement());
-    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false, false);
-    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false, false);
+    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false);
+    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false);
     render(filmsEl, mainListEl);
     render(filmsEl, topListEl);
     render(filmsEl, bandyListEl);
