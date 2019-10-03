@@ -42,6 +42,9 @@ menu
     }
 
     let filtered = [];
+    const activeLinkCls = `main-navigation__item--active`;
+    const activeLinkEl = menuEl.querySelector(`.${activeLinkCls}`);
+    const isNewLink = activeLinkEl !== evt.target;
 
     const updateFilms = (newFilms) => {
       stats.hide();
@@ -68,6 +71,11 @@ menu
         page.hide();
         stats.show();
         break;
+    }
+
+    if (isNewLink) {
+      activeLinkEl.classList.remove(activeLinkCls);
+      evt.target.classList.add(activeLinkCls);
     }
   });
 
