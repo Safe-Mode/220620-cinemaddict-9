@@ -22,6 +22,8 @@ class PageController {
   }
 
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = true) {
+    const mainListEl = this._mainList.getElement();
+    const showMoreEl = this._showMore.getElement();
     const finishIndex = (isContinues) ? this._filmsRendered + cardsPerRow : cardsPerRow;
     const quantity = (isContinues) ? this._filmsRendered : 0;
 
@@ -34,10 +36,12 @@ class PageController {
     }
 
     const isFinish = this._filmsRendered >= films.length;
+    const isShowMoreExists = mainListEl.contains(showMoreEl);
 
     if (isFinish) {
-      unrender(this._showMore.getElement());
-      this._showMore.removeElement();
+      unrender(showMoreEl);
+    } else if (!isFinish && !isShowMoreExists) {
+      render(mainListEl, showMoreEl);
     }
   }
 
@@ -70,7 +74,7 @@ class PageController {
           break;
       }
 
-      this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN, true, false);
+      this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN, false, true);
 
       if (isNewLink) {
         activeLinkEl.classList.remove(activeLinkCls);
@@ -79,7 +83,16 @@ class PageController {
     }
   }
 
-  show() {
+  show(films) {
+    const oldList = this._mainList.getElement();
+
+    this._films = films;
+    this._filmsToRender = films;
+    this._mainList = new FilmList(`All movies. Upcoming`, this._filmsToRender);
+    this._filmListController = new FilmListController(this._board.getElement(), this._filmsToRender);
+    this._filmsRendered = 0;
+    this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN);
+    oldList.replaceWith(this._mainList.getElement());
     render(this._container, this._sort.getElement());
     render(this._container, this._board.getElement());
   }
@@ -102,7 +115,7 @@ class PageController {
     if (isMultiRow) {
       showMoreEl.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._renderCardsRow(this._filmsToRender, mainListEl, CardsPerRow.MAIN);
+        this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN);
       });
 
       render(mainListEl, showMoreEl);

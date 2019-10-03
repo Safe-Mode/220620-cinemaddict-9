@@ -27,7 +27,7 @@ const clearMainEl = () => {
 const hideSearchBoard = () => {
   if (searchController) {
     render(mainEl, menuEl);
-    page.show();
+    page.show(films);
     searchController.hide();
   }
 };
@@ -41,10 +41,28 @@ menu
       return;
     }
 
+    let filtered = [];
+
+    const updateFilms = (newFilms) => {
+      stats.hide();
+      page.show(newFilms);
+    };
+
     switch (evt.target.hash) {
       case `#all`:
-        stats.hide();
-        page.show();
+        updateFilms(films);
+        break;
+      case `#watchlist`:
+        filtered = films.filter(({user}) => user.watchlist);
+        updateFilms(filtered);
+        break;
+      case `#history`:
+        filtered = films.filter(({user}) => user.watched);
+        updateFilms(filtered);
+        break;
+      case `#favorites`:
+        filtered = films.filter(({user}) => user.favorite);
+        updateFilms(filtered);
         break;
       case `#stats`:
         page.hide();
