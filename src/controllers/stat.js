@@ -11,7 +11,7 @@ class StatController {
     this._films = films;
     this._rank = rank;
     this._stat = new Stat(this._rank);
-    this._statInfo = new StatInfo(this._films);
+    this._statInfo = null;
     this._chart = null;
   }
 
@@ -59,6 +59,9 @@ class StatController {
     const filterEl = statEl.querySelector(`.statistic__filters`);
     const labels = this._getChartLabels(this._films);
     const data = this._getChartData(this._films, labels);
+    const topGenre = labels[data.indexOf(Math.max(...data))];
+
+    this._statInfo = new StatInfo(this._films, topGenre);
 
     this._chart = new Chart(chartEl, {
       plugins: [ChartDataLabels],
@@ -146,9 +149,10 @@ class StatController {
 
       const newLabels = this._getChartLabels(filtered);
       const newData = this._getChartData(filtered, newLabels);
+      const newTopGenre = newLabels[newData.indexOf(Math.max(...newData))];
 
       this._updateChart(newLabels, newData);
-      this._statInfo = new StatInfo(filtered);
+      this._statInfo = new StatInfo(filtered, newTopGenre);
 
       statInfoEl.replaceWith(this._statInfo.getElement());
     });

@@ -2,12 +2,13 @@ import {MIN_PER_HOUR} from '../const';
 import {AbstractComponent} from './abstract-component';
 
 class StatInfo extends AbstractComponent {
-  constructor(films) {
+  constructor(films, topGenre) {
     super();
     this._films = films;
     this._totalDuration = this._films.reduce((duration, film) => {
       return duration + film.duration;
     }, 0);
+    this._topGenre = topGenre;
   }
 
   getTemplate() {
@@ -23,7 +24,7 @@ class StatInfo extends AbstractComponent {
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
-          <p class="statistic__item-text">Sci-Fi</p>
+          <p class="statistic__item-text">${this._topGenre}</p>
         </li>
       </ul>
     `;
