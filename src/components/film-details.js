@@ -34,7 +34,7 @@ class FilmDetails extends AbstractComponent {
             </div>
             <div class="film-details__info-wrap">
               <div class="film-details__poster">
-                <img class="film-details__poster-img" src="./images/posters/${this._poster}" alt="">
+                <img class="film-details__poster-img" src="${this._poster}" alt="">
 
                 <p class="film-details__age">${this._age}+</p>
               </div>
