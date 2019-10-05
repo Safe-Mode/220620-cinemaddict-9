@@ -18,6 +18,7 @@ class MovieController {
     this._tmpData = null;
     this._position = position;
     this._api = new API({endPoint: END_POINT, authorization: AUTH});
+    this._onEscKeydown = this._onEscKeydown.bind(this);
   }
 
   _initTmpData() {
@@ -34,19 +35,19 @@ class MovieController {
     document.body.classList[clsMethod](overflowCls);
   }
 
-  _setListeners() {
-    const onEscKeydown = (evt) => {
-      if (isEscPressed(evt.key)) {
-        this.setDefaultView();
-        document.removeEventListener(`keydown`, onEscKeydown);
-      }
-    };
+  _onEscKeydown(evt) {
+    if (isEscPressed(evt.key)) {
+      this.setDefaultView();
+      document.removeEventListener(`keydown`, this._onEscKeydown);
+    }
+  }
 
+  _setListeners() {
     const onCloseBtnClick = (closeEvt) => {
       if (closeEvt.target.classList.contains(`film-details__close-btn`)) {
         closeEvt.preventDefault();
         this.setDefaultView();
-        document.removeEventListener(`keydown`, onEscKeydown);
+        document.removeEventListener(`keydown`, this._onEscKeydown);
       }
     };
 
@@ -91,7 +92,7 @@ class MovieController {
     const filmDetailsEl = this._details.getElement();
     const filmUserRateEl = filmDetailsEl.querySelector(`.film-details__user-rating-score`);
 
-    document.addEventListener(`keydown`, onEscKeydown);
+    document.addEventListener(`keydown`, this._onEscKeydown);
     filmDetailsEl.addEventListener(`click`, onCloseBtnClick);
 
     filmDetailsEl
@@ -154,19 +155,12 @@ class MovieController {
 
         this._api.getComments(this._data.id)
           .then((comments) => {
-            const onEscKeydown = (escEvt) => {
-              if (isEscPressed(escEvt.key)) {
-                this.setDefaultView();
-                document.removeEventListener(`keydown`, onEscKeydown);
-              }
-            };
-
             const onCommentBlur = () => {
-              document.addEventListener(`keydown`, onEscKeydown);
+              document.addEventListener(`keydown`, this._onEscKeydown);
             };
 
             const onCommentFocus = (focusEvt) => {
-              document.removeEventListener(`keydown`, onEscKeydown);
+              document.removeEventListener(`keydown`, this._onEscKeydown);
               focusEvt.target.addEventListener(`blur`, onCommentBlur);
             };
 
