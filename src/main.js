@@ -1,4 +1,4 @@
-import {SEARCH_MIN_LENGTH} from './const';
+import {SEARCH_MIN_LENGTH, END_POINT, AUTH} from './const';
 import {render, unrender, getRank} from './util';
 import {PageController} from './controllers/page';
 import {Menu} from './components/menu';
@@ -6,33 +6,52 @@ import {Profile} from './components/profile';
 import {Search} from './components/search';
 import {SearchController} from './controllers/search';
 import {StatController} from './controllers/stat';
-import {films, rankMap} from './data';
+import {API} from './api';
+import {rankMap} from './data';
 
-const watched = films.filter(({user}) => user.watched);
-const rank = getRank(watched.length, rankMap);
-const headerEl = document.querySelector(`.header`);
-const mainEl = document.querySelector(`.main`);
-const page = new PageController(mainEl, films);
-const menu = new Menu(films);
-const menuEl = menu.getElement();
-const stats = new StatController(mainEl, watched, rank);
-const search = new Search();
-const searchEl = search.getElement();
-let searchController = null;
+const api = new API({
+  endPoint: END_POINT,
+  authorization: AUTH,
+});
 
-const clearMainEl = () => {
-  mainEl.innerHTML = ``;
-};
-
-const hideSearchBoard = () => {
-  if (searchController) {
-    render(mainEl, menuEl);
-    page.show(films);
-    searchController.hide();
+const onDataChange = (action, film, cb) => {
+  switch (action) {
+    case `update`:
+      api.updateMovie({
+        id: film.id,
+        data: film.toRAW(),
+      })
+        .then(cb);
+      break;
   }
 };
 
-menu
+api.getMovies().then((films) => {
+  const watched = films.filter(({user}) => user.watched);
+  const rank = getRank(watched.length, rankMap);
+  const headerEl = document.querySelector(`.header`);
+  const mainEl = document.querySelector(`.main`);
+  const page = new PageController(mainEl, films, onDataChange);
+  const menu = new Menu(films);
+  const menuEl = menu.getElement();
+  const stats = new StatController(mainEl, watched, rank);
+  const search = new Search();
+  const searchEl = search.getElement();
+  let searchController = null;
+
+  const clearMainEl = () => {
+    mainEl.innerHTML = ``;
+  };
+
+  const hideSearchBoard = () => {
+    if (searchController) {
+      render(mainEl, menuEl);
+      page.show(films);
+      searchController.hide();
+    }
+  };
+
+  menu
   .getElement()
   .addEventListener(`click`, (evt) => {
     evt.preventDefault();
@@ -79,7 +98,7 @@ menu
     }
   });
 
-searchEl
+  searchEl
   .querySelector(`.search__field`)
   .addEventListener(`input`, (evt) => {
     const value = evt.target.value.toLowerCase();
@@ -101,10 +120,11 @@ searchEl
     }
   });
 
-searchEl.addEventListener(`reset`, hideSearchBoard);
+  searchEl.addEventListener(`reset`, hideSearchBoard);
 
-render(headerEl, searchEl);
-render(headerEl, new Profile(rank).getElement());
-render(mainEl, menuEl);
-stats.init();
-page.init();
+  render(headerEl, searchEl);
+  render(headerEl, new Profile(rank).getElement());
+  render(mainEl, menuEl);
+  stats.init();
+  page.init();
+});

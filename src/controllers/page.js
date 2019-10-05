@@ -8,9 +8,10 @@ import {FilmListController} from '../controllers/film-list';
 import {ShowMore} from '../components/show-more';
 
 class PageController {
-  constructor(container, films) {
+  constructor(container, films, onDataChange) {
     this._container = container;
     this._films = films;
+    this._onDataChange = onDataChange;
     this._filmsToRender = films;
     this._filmsRendered = 0;
     this._sort = new Sort();
@@ -18,7 +19,7 @@ class PageController {
     this._mainList = new FilmList(`All movies. Upcoming`, this._films);
     this._topList = new FilmList(`Top rated`, this._films, true);
     this._bandyList = new FilmList(`Most commented`, this._films, true);
-    this._filmListController = new FilmListController(this._board.getElement(), this._films);
+    this._filmListController = new FilmListController(this._board.getElement(), this._films, this._onDataChange);
     this._showMore = new ShowMore();
   }
 
@@ -90,7 +91,7 @@ class PageController {
     this._films = films;
     this._filmsToRender = films;
     this._mainList = new FilmList(`All movies. Upcoming`, this._filmsToRender);
-    this._filmListController = new FilmListController(this._board.getElement(), this._filmsToRender);
+    this._filmListController = new FilmListController(this._board.getElement(), this._filmsToRender, this._onDataChange);
     this._filmsRendered = 0;
     this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN);
     oldList.replaceWith(this._mainList.getElement());

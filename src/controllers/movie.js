@@ -1,7 +1,10 @@
 import {cloneDeep} from 'lodash';
+import {END_POINT, AUTH} from '../const';
 import {render, unrender, isEscPressed, isEnterPressed} from '../util';
 import {Film} from '../components/film';
 import {FilmDetails} from '../components/film-details';
+import {FilmComments} from '../components/film-comments';
+import {API} from '../api';
 
 class MovieController {
   constructor(container, data, onDataChange, onChangeView, position) {
@@ -11,10 +14,11 @@ class MovieController {
     this._onChangeView = onChangeView;
     this._film = new Film(data);
     this._details = new FilmDetails(data);
+    this._comments = null;
     this._tmpData = null;
     this._position = position;
-    this._onDataChange = onDataChange;
-    this._onChangeView = onChangeView;
+    this._api = new API({endPoint: END_POINT, authorization: AUTH});
+    this._onEscKeydown = this._onEscKeydown.bind(this);
   }
 
   _initTmpData() {
@@ -31,34 +35,25 @@ class MovieController {
     document.body.classList[clsMethod](overflowCls);
   }
 
-  _setListeners() {
-    const onEscKeydown = (evt) => {
-      if (isEscPressed(evt.key)) {
-        this.setDefaultView();
-        document.removeEventListener(`keydown`, onEscKeydown);
-      }
-    };
+  _onEscKeydown(evt) {
+    if (isEscPressed(evt.key)) {
+      this.setDefaultView();
+      document.removeEventListener(`keydown`, this._onEscKeydown);
+    }
+  }
 
+  _setListeners() {
     const onCloseBtnClick = (closeEvt) => {
       if (closeEvt.target.classList.contains(`film-details__close-btn`)) {
         closeEvt.preventDefault();
         this.setDefaultView();
-        document.removeEventListener(`keydown`, onEscKeydown);
+        document.removeEventListener(`keydown`, this._onEscKeydown);
       }
-    };
-
-    const onCommentBlur = () => {
-      document.addEventListener(`keydown`, onEscKeydown);
-    };
-
-    const onCommentFocus = (evt) => {
-      document.removeEventListener(`keydown`, onEscKeydown);
-      evt.target.addEventListener(`blur`, onCommentBlur);
     };
 
     const onRatingInput = (evt) => {
       this._initTmpData();
-      this._tmpData.user.rating = evt.target.value;
+      this._tmpData.user.rating = Number(evt.target.value);
       this._onDataChange(this._tmpData, this._data);
       this._resetTmpData();
     };
@@ -79,38 +74,6 @@ class MovieController {
       this._resetTmpData();
     };
 
-    const onEmojiInput = (evt) => {
-      const imgMarkup = `
-        <img src="images/emoji/${evt.target.value}.png" width="55" height="55" alt="emoji">
-      `;
-      const emojiLabelEl = this._details
-        .getElement()
-        .querySelector(`.film-details__add-emoji-label`);
-
-      emojiLabelEl.innerHTML = ``;
-      emojiLabelEl.insertAdjacentHTML(`beforeend`, imgMarkup);
-    };
-
-    const onCommentEnter = (evt) => {
-      if (isEnterPressed(evt.key) && evt.ctrlKey) {
-        const formData = new FormData(this._details
-          .getElement()
-          .querySelector(`.film-details__inner`));
-
-        const comment = {
-          name: `Anonymous`, // delete after 8
-          published: Date.now(),
-          text: formData.get(`comment`),
-          emoji: formData.get(`comment-emoji`),
-        };
-
-        this._initTmpData();
-        this._tmpData.comments.push(comment);
-        this._onDataChange(this._tmpData, this._data);
-        this._resetTmpData();
-      }
-    };
-
     const onDeleteCommentClick = (evt) => {
       evt.preventDefault();
 
@@ -129,21 +92,12 @@ class MovieController {
     const filmDetailsEl = this._details.getElement();
     const filmUserRateEl = filmDetailsEl.querySelector(`.film-details__user-rating-score`);
 
-    document.addEventListener(`keydown`, onEscKeydown);
+    document.addEventListener(`keydown`, this._onEscKeydown);
     filmDetailsEl.addEventListener(`click`, onCloseBtnClick);
 
     filmDetailsEl
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`focus`, onCommentFocus);
-    filmDetailsEl
       .querySelector(`.film-details__controls`)
       .addEventListener(`input`, onDetailsControlInput);
-    filmDetailsEl
-      .querySelector(`.film-details__emoji-list`)
-      .addEventListener(`input`, onEmojiInput);
-    filmDetailsEl
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`keydown`, onCommentEnter);
 
     filmDetailsEl
       .querySelectorAll(`.film-details__comment-delete`)
@@ -198,6 +152,64 @@ class MovieController {
 
       if (isToggler) {
         this.openPopup();
+
+        this._api.getComments(this._data.id)
+          .then((comments) => {
+            const onCommentBlur = () => {
+              document.addEventListener(`keydown`, this._onEscKeydown);
+            };
+
+            const onCommentFocus = (focusEvt) => {
+              document.removeEventListener(`keydown`, this._onEscKeydown);
+              focusEvt.target.addEventListener(`blur`, onCommentBlur);
+            };
+
+            const onEmojiInput = (inputEvt) => {
+              const imgMarkup = `
+                <img src="images/emoji/${inputEvt.target.value}.png" width="55" height="55" alt="emoji">
+              `;
+              const emojiLabelEl = this._details
+                .getElement()
+                .querySelector(`.film-details__add-emoji-label`);
+
+              emojiLabelEl.innerHTML = ``;
+              emojiLabelEl.insertAdjacentHTML(`beforeend`, imgMarkup);
+            };
+
+            const onCommentEnter = (enterEvt) => {
+              if (isEnterPressed(enterEvt.key) && enterEvt.ctrlKey) {
+                const formData = new FormData(this._details
+                  .getElement()
+                  .querySelector(`.film-details__inner`));
+
+                const comment = {
+                  published: Date.now(),
+                  text: formData.get(`comment`),
+                  emoji: formData.get(`comment-emoji`),
+                };
+
+                this._initTmpData();
+                this._tmpData.comments.push(comment);
+                this._onDataChange(this._tmpData, this._data);
+                this._resetTmpData();
+              }
+            };
+
+            const filmDetailsEl = this._details.getElement();
+
+            this._comments = new FilmComments(comments);
+            render(filmDetailsEl.querySelector(`.form-details__bottom-container`), this._comments.getElement());
+
+            filmDetailsEl
+              .querySelector(`.film-details__comment-input`)
+              .addEventListener(`focus`, onCommentFocus);
+            filmDetailsEl
+              .querySelector(`.film-details__emoji-list`)
+              .addEventListener(`input`, onEmojiInput);
+            filmDetailsEl
+              .querySelector(`.film-details__comment-input`)
+              .addEventListener(`keydown`, onCommentEnter);
+          });
       }
     };
 
