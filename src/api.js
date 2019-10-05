@@ -1,5 +1,6 @@
 import {Status} from './const';
 import {ModelMovie} from './model-movie';
+import {ModelComment} from './model-comment';
 
 const toJSON = (response) => {
   return response.json();
@@ -23,6 +24,12 @@ const API = class {
     return this._load({url: `movies`})
       .then(toJSON)
       .then(ModelMovie.parseMovies);
+  }
+
+  getComments(id) {
+    return this._load({url: `comments/${id}`})
+      .then(toJSON)
+      .then(ModelComment.parseComments);
   }
 
   // createTask({task}) {
