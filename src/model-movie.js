@@ -30,6 +30,39 @@ class ModelMovie {
   static parseMovies(data) {
     return data.map(ModelMovie.parseMovie);
   }
+
+  toRAW() {
+    const userDetails = {};
+    const filmInfo = {};
+    const release = {};
+
+    userDetails[`watchlist`] = this.user.watchlist;
+    userDetails[`already_watched`] = this.user.watched;
+    userDetails[`favorite`] = this.user.favorite;
+    userDetails[`personal_rating`] = this.user.rating || 0;
+    userDetails[`watching_date`] = new Date(this.user.watchingDate).toISOString();
+    filmInfo[`poster`] = this.poster;
+    filmInfo[`title`] = this.title;
+    filmInfo[`alternative_title`] = this.alt;
+    filmInfo[`total_rating`] = this.rate;
+    release[`date`] = new Date(this.release).toISOString();
+    release[`release_country`] = this.country;
+    filmInfo[`release`] = release;
+    filmInfo[`runtime`] = this.duration;
+    filmInfo[`genre`] = [...this.genres];
+    filmInfo[`description`] = this.description;
+    filmInfo[`director`] = this.director;
+    filmInfo[`writers`] = this.writers;
+    filmInfo[`actors`] = this.actors;
+    filmInfo[`age_rating`] = this.age;
+
+    return {
+      'id': this.id,
+      'user_details': userDetails,
+      'film_info': filmInfo,
+      'comments': this.comments,
+    };
+  }
 }
 
 export {ModelMovie};

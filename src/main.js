@@ -14,12 +14,24 @@ const api = new API({
   authorization: AUTH,
 });
 
+const onDataChange = (action, film, cb) => {
+  switch (action) {
+    case `update`:
+      api.updateMovie({
+        id: film.id,
+        data: film.toRAW(),
+      })
+        .then(cb);
+      break;
+  }
+};
+
 api.getMovies().then((films) => {
   const watched = films.filter(({user}) => user.watched);
   const rank = getRank(watched.length, rankMap);
   const headerEl = document.querySelector(`.header`);
   const mainEl = document.querySelector(`.main`);
-  const page = new PageController(mainEl, films);
+  const page = new PageController(mainEl, films, onDataChange);
   const menu = new Menu(films);
   const menuEl = menu.getElement();
   const stats = new StatController(mainEl, watched, rank);

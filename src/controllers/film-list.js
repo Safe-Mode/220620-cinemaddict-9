@@ -2,9 +2,10 @@ import {cloneDeep} from 'lodash';
 import {MovieController} from './movie';
 
 class FilmListController {
-  constructor(container, films) {
+  constructor(container, films, onDataMainChange) {
     this._container = container;
     this._films = films;
+    this._onDataMainChange = onDataMainChange;
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
     this._subscriptions = [];
@@ -21,7 +22,7 @@ class FilmListController {
 
     lists.forEach((list) => {
       if (filmIndex >= 0 && filmIndex < list.querySelector(`.films-list__container`).children.length) {
-        this.renderCard(list, this._films[filmIndex], filmIndex, true);
+        this._onDataMainChange(`update`, this._films[filmIndex], this.renderCard.bind(this, list, this._films[filmIndex], filmIndex, true));
       }
     });
   }

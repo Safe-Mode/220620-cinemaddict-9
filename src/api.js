@@ -42,15 +42,16 @@ const API = class {
   //     .then(toJSON);
   // }
 
-  // updateTask({id, data}) {
-  //   return this._load({
-  //     url: `tasks/${id}`,
-  //     method: `PUT`,
-  //     body: JSON.stringify(data),
-  //     headers: new Headers({'Content-Type': `application/json`}),
-  //   })
-  //     .then(toJSON);
-  // }
+  updateMovie({id, data}) {
+    return this._load({
+      url: `movies/${id}`,
+      method: `PUT`,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`}),
+    })
+      .then(toJSON)
+      .then(ModelMovie.parseMovie);
+  }
 
   // deleteTask({id}) {
   //   return this._load({

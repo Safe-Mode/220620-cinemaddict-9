@@ -17,8 +17,6 @@ class MovieController {
     this._comments = null;
     this._tmpData = null;
     this._position = position;
-    this._onDataChange = onDataChange;
-    this._onChangeView = onChangeView;
     this._api = new API({endPoint: END_POINT, authorization: AUTH});
   }
 
@@ -54,7 +52,7 @@ class MovieController {
 
     const onRatingInput = (evt) => {
       this._initTmpData();
-      this._tmpData.user.rating = evt.target.value;
+      this._tmpData.user.rating = Number(evt.target.value);
       this._onDataChange(this._tmpData, this._data);
       this._resetTmpData();
     };
