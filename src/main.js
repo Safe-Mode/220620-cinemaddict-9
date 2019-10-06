@@ -1,5 +1,5 @@
 import {SEARCH_MIN_LENGTH, END_POINT, AUTH} from './const';
-import {render, unrender, getRank, rankMap} from './util';
+import {render, getRank, rankMap} from './util';
 import {PageController} from './controllers/page';
 import {MenuController} from './controllers/menu';
 import {Profile} from './components/profile';
@@ -94,13 +94,15 @@ const onDataChange = (action, film, cb, deleted) => {
   }
 };
 
+const page = new PageController(mainEl, onDataChange);
+
 render(headerEl, searchEl);
 menu.init();
+page.init();
 
 api.getMovies().then((films) => {
   const watched = films.filter(({user}) => user.watched);
   const rank = getRank(watched.length, rankMap);
-  const page = new PageController(mainEl, films, onDataChange);
   const stats = new StatController(mainEl, watched, rank);
   let searchController = null;
 
@@ -182,6 +184,6 @@ api.getMovies().then((films) => {
   render(headerEl, new Profile(rank).getElement());
   menu.update(films, toggleContent);
   stats.init();
-  page.init();
+  page.update(films);
   render(document.body, new Footer(films.length).getElement());
 });
