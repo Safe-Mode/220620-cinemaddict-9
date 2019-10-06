@@ -26,17 +26,15 @@ class FilmListController {
   }
 
   _updateCard(filmIndex, newData) {
-    const mainList = this._container.querySelector(`.films-list`);
-    const extraLists = this._container.querySelectorAll(`.films-list--extra`);
     const filmId = this._films[filmIndex].id;
+    const lists = [
+      this._container.querySelector(`.films-list`),
+      ...this._container.querySelectorAll(`.films-list--extra`)
+    ];
 
     this._films[filmIndex] = newData;
 
-    if (filmIndex >= 0 && filmIndex < mainList.querySelector(`.films-list__container`).children.length) {
-      this.renderCard(mainList, this._films[filmIndex], filmIndex, true);
-    }
-
-    extraLists.forEach((list) => {
+    lists.forEach((list) => {
       const elements = list.querySelector(`.films-list__container`).children;
 
       for (let element of elements) {
