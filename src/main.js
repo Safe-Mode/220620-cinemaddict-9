@@ -21,11 +21,7 @@ const onDataChange = (action, film, cb) => {
         id: film.id,
         data: film.toRAW(),
       })
-        .then((data) => {
-          console.log(data);
-
-          cb(data);
-        });
+        .then(cb);
       break;
   }
 };
@@ -64,7 +60,6 @@ api.getMovies().then((films) => {
       return;
     }
 
-    let filtered = [];
     const activeLinkCls = `main-navigation__item--active`;
     const activeLinkEl = menuEl.querySelector(`.${activeLinkCls}`);
     const isNewLink = activeLinkEl !== evt.target;
@@ -74,32 +69,36 @@ api.getMovies().then((films) => {
       page.show(newFilms);
     };
 
-    switch (evt.target.hash) {
-      case `#all`:
-        updateFilms(films);
-        break;
-      case `#watchlist`:
-        filtered = films.filter(({user}) => user.watchlist);
-        updateFilms(filtered);
-        break;
-      case `#history`:
-        filtered = films.filter(({user}) => user.watched);
-        updateFilms(filtered);
-        break;
-      case `#favorites`:
-        filtered = films.filter(({user}) => user.favorite);
-        updateFilms(filtered);
-        break;
-      case `#stats`:
-        page.hide();
-        stats.show();
-        break;
-    }
+    api.getMovies().then((newFilms) => {
+      let filtered = [];
 
-    if (isNewLink) {
-      activeLinkEl.classList.remove(activeLinkCls);
-      evt.target.classList.add(activeLinkCls);
-    }
+      switch (evt.target.hash) {
+        case `#all`:
+          updateFilms(newFilms);
+          break;
+        case `#watchlist`:
+          filtered = newFilms.filter(({user}) => user.watchlist);
+          updateFilms(filtered);
+          break;
+        case `#history`:
+          filtered = newFilms.filter(({user}) => user.watched);
+          updateFilms(filtered);
+          break;
+        case `#favorites`:
+          filtered = newFilms.filter(({user}) => user.favorite);
+          updateFilms(filtered);
+          break;
+        case `#stats`:
+          page.hide();
+          stats.show();
+          break;
+      }
+
+      if (isNewLink) {
+        activeLinkEl.classList.remove(activeLinkCls);
+        evt.target.classList.add(activeLinkCls);
+      }
+    });
   });
 
   searchEl

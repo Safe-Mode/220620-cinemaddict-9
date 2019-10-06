@@ -14,11 +14,13 @@ class PageController {
     this._onDataChange = onDataChange;
     this._filmsToRender = films;
     this._filmsRendered = 0;
+    this._sortedByComments = cloneDeep(films).sort((filmsA, filmsB) => filmsB.comments.length - filmsA.comments.length);
+    this._sortedByRating = cloneDeep(films).sort((filmsA, filmsB) => filmsB.rate - filmsA.rate);
     this._sort = new Sort();
     this._board = new Films();
     this._mainList = new FilmList(`All movies. Upcoming`, this._films);
-    this._topList = new FilmList(`Top rated`, this._films, true);
-    this._bandyList = new FilmList(`Most commented`, this._films, true);
+    this._topList = new FilmList(`Top rated`, this._sortedByRating, true);
+    this._bandyList = new FilmList(`Most commented`, this._sortedByComments, true);
     this._filmListController = new FilmListController(this._board.getElement(), this._films, this._onDataChange);
     this._showMore = new ShowMore();
   }
@@ -128,8 +130,8 @@ class PageController {
       .addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
     render(this._container, this._sort.getElement());
-    this._renderCardsRow(this._filmsToRender, topListEl, CardsPerRow.EXTRA, false);
-    this._renderCardsRow(this._filmsToRender, bandyListEl, CardsPerRow.EXTRA, false);
+    this._renderCardsRow(this._sortedByRating, topListEl, CardsPerRow.EXTRA, false);
+    this._renderCardsRow(this._sortedByComments, bandyListEl, CardsPerRow.EXTRA, false);
     render(filmsEl, mainListEl);
     render(filmsEl, topListEl);
     render(filmsEl, bandyListEl);
