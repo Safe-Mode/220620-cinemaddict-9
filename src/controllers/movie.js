@@ -113,6 +113,64 @@ class MovieController {
     this._setListeners();
     render(document.body, this._details.getElement());
     this._toggleBodyScroll();
+
+    this._api.getComments(this._data.id)
+      .then((comments) => {
+        const onCommentBlur = () => {
+          document.addEventListener(`keydown`, this._onEscKeydown);
+        };
+
+        const onCommentFocus = (focusEvt) => {
+          document.removeEventListener(`keydown`, this._onEscKeydown);
+          focusEvt.target.addEventListener(`blur`, onCommentBlur);
+        };
+
+        const onEmojiInput = (inputEvt) => {
+          const imgMarkup = `
+            <img src="images/emoji/${inputEvt.target.value}.png" width="55" height="55" alt="emoji">
+          `;
+          const emojiLabelEl = this._details
+            .getElement()
+            .querySelector(`.film-details__add-emoji-label`);
+
+          emojiLabelEl.innerHTML = ``;
+          emojiLabelEl.insertAdjacentHTML(`beforeend`, imgMarkup);
+        };
+
+        const onCommentEnter = (enterEvt) => {
+          if (isEnterPressed(enterEvt.key) && enterEvt.ctrlKey) {
+            const formData = new FormData(this._details
+              .getElement()
+              .querySelector(`.film-details__inner`));
+
+            const comment = {
+              published: Date.now(),
+              text: formData.get(`comment`),
+              emoji: formData.get(`comment-emoji`),
+            };
+
+            this._initTmpData();
+            this._tmpData.comments.push(comment);
+            this._onDataChange(this._tmpData, this._data);
+            this._resetTmpData();
+          }
+        };
+
+        const filmDetailsEl = this._details.getElement();
+
+        this._comments = new FilmComments(comments);
+        render(filmDetailsEl.querySelector(`.form-details__bottom-container`), this._comments.getElement());
+
+        filmDetailsEl
+          .querySelector(`.film-details__comment-input`)
+          .addEventListener(`focus`, onCommentFocus);
+        filmDetailsEl
+          .querySelector(`.film-details__emoji-list`)
+          .addEventListener(`input`, onEmojiInput);
+        filmDetailsEl
+          .querySelector(`.film-details__comment-input`)
+          .addEventListener(`keydown`, onCommentEnter);
+      });
   }
 
   setDefaultView() {
@@ -152,64 +210,6 @@ class MovieController {
 
       if (isToggler) {
         this.openPopup();
-
-        this._api.getComments(this._data.id)
-          .then((comments) => {
-            const onCommentBlur = () => {
-              document.addEventListener(`keydown`, this._onEscKeydown);
-            };
-
-            const onCommentFocus = (focusEvt) => {
-              document.removeEventListener(`keydown`, this._onEscKeydown);
-              focusEvt.target.addEventListener(`blur`, onCommentBlur);
-            };
-
-            const onEmojiInput = (inputEvt) => {
-              const imgMarkup = `
-                <img src="images/emoji/${inputEvt.target.value}.png" width="55" height="55" alt="emoji">
-              `;
-              const emojiLabelEl = this._details
-                .getElement()
-                .querySelector(`.film-details__add-emoji-label`);
-
-              emojiLabelEl.innerHTML = ``;
-              emojiLabelEl.insertAdjacentHTML(`beforeend`, imgMarkup);
-            };
-
-            const onCommentEnter = (enterEvt) => {
-              if (isEnterPressed(enterEvt.key) && enterEvt.ctrlKey) {
-                const formData = new FormData(this._details
-                  .getElement()
-                  .querySelector(`.film-details__inner`));
-
-                const comment = {
-                  published: Date.now(),
-                  text: formData.get(`comment`),
-                  emoji: formData.get(`comment-emoji`),
-                };
-
-                this._initTmpData();
-                this._tmpData.comments.push(comment);
-                this._onDataChange(this._tmpData, this._data);
-                this._resetTmpData();
-              }
-            };
-
-            const filmDetailsEl = this._details.getElement();
-
-            this._comments = new FilmComments(comments);
-            render(filmDetailsEl.querySelector(`.form-details__bottom-container`), this._comments.getElement());
-
-            filmDetailsEl
-              .querySelector(`.film-details__comment-input`)
-              .addEventListener(`focus`, onCommentFocus);
-            filmDetailsEl
-              .querySelector(`.film-details__emoji-list`)
-              .addEventListener(`input`, onEmojiInput);
-            filmDetailsEl
-              .querySelector(`.film-details__comment-input`)
-              .addEventListener(`keydown`, onCommentEnter);
-          });
       }
     };
 

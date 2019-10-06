@@ -18,17 +18,22 @@ class FilmListController {
       ...this._container.querySelectorAll(`.films-list--extra`)
     ];
 
-    this._films[filmIndex] = cloneDeep(newData);
+    // this._films[filmIndex] = cloneDeep(newData);
 
     lists.forEach((list) => {
       if (filmIndex >= 0 && filmIndex < list.querySelector(`.films-list__container`).children.length) {
-        this._onDataMainChange(`update`, this._films[filmIndex], this.renderCard.bind(this, list, this._films[filmIndex], filmIndex, true));
+        this._onDataMainChange(`update`, newData, this._updateCard.bind(this, list, filmIndex));
       }
     });
   }
 
   _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
+  }
+
+  _updateCard(list, filmIndex, newData) {
+    this._films[filmIndex] = newData;
+    this.renderCard(list, this._films[filmIndex], filmIndex, true);
   }
 
   renderCard(listEl, film, position, openPopup) {

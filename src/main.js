@@ -21,7 +21,11 @@ const onDataChange = (action, film, cb) => {
         id: film.id,
         data: film.toRAW(),
       })
-        .then(cb);
+        .then((data) => {
+          console.log(data);
+
+          cb(data);
+        });
       break;
   }
 };
