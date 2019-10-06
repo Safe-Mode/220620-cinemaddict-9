@@ -13,7 +13,7 @@ class FilmList extends AbstractComponent {
       <section class="films-list${(this._isExtra) ? `--extra` : ``}">
         <h2 class="films-list__title ${(this._isExtra) ? `` : `visually-hidden`}">${this._title}</h2>
         ${(this._quantity) ? `<div class="films-list__container"></div>` : `<div class="no-result">
-          There is no movies for your request.
+          There are no movies in our database.
         </div>`}
       </section>
     `;

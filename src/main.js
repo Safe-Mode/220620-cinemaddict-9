@@ -6,6 +6,7 @@ import {Profile} from './components/profile';
 import {Search} from './components/search';
 import {SearchController} from './controllers/search';
 import {StatController} from './controllers/stat';
+import {Footer} from './components/footer';
 import {API} from './api';
 import {ModelComment} from './model-comment';
 
@@ -191,4 +192,5 @@ api.getMovies().then((films) => {
   render(mainEl, menuEl);
   stats.init();
   page.init();
+  render(document.body, new Footer(films.length).getElement());
 });
