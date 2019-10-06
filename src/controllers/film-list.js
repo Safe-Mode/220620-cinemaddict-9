@@ -11,7 +11,7 @@ class FilmListController {
   }
 
   _onDataChange(newData, oldData, action = `update`) {
-    const filmIndex = this._films.findIndex((movie) => movie === oldData);
+    const filmIndex = this._films.findIndex((movie) => movie.id === oldData.id);
     let deleted = null;
 
     if (action === `delete`) {

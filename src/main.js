@@ -36,7 +36,9 @@ const onDataChange = (action, film, cb, deleted) => {
       break;
     case `delete`:
       api.deleteComment({id: deleted})
-        .then(cb(film));
+        .then(() => {
+          cb(film);
+        });
       break;
   }
 };

@@ -40,7 +40,7 @@ const API = class {
       headers: new Headers({'Content-Type': `application/json`}),
     })
       .then(toJSON)
-      .then(({comments}) => ModelComment.parseComments(comments));
+      .then(({movie: {comments}}) => comments);
   }
 
   updateMovie({id, data}) {
