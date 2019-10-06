@@ -15,9 +15,39 @@ const api = new API({
   authorization: AUTH,
 });
 
+const changeCommentsState = (wrapper, isDisabled) => {
+  wrapper.querySelector(`.film-details__comment-input`).disabled = isDisabled;
+
+  wrapper
+    .querySelectorAll(`.film-details__emoji-item`)
+    .forEach((item) => {
+      item.disabled = isDisabled;
+    });
+};
+
+const changeRatingState = (wrapper, isDisabled) => {
+  wrapper
+    .querySelectorAll(`.film-details__user-rating-input`)
+    .forEach((input) => {
+      input.disabled = isDisabled;
+    });
+};
+
+const toggleError = (element, isError) => {
+  const clsMethod = (isError) ? `add` : `remove`;
+
+  element.classList[clsMethod](`error`);
+  element.classList[clsMethod](`shake`);
+};
+
 const onDataChange = (action, film, cb, deleted) => {
   switch (action) {
     case `post`:
+      const commentsWrapEl = document.querySelector(`.film-details__new-comment`);
+
+      toggleError(commentsWrapEl, false);
+      changeCommentsState(commentsWrapEl, true);
+
       api.postComment({
         filmId: film.id,
         comment: ModelComment.toRAW([...film.comments].pop()),
@@ -25,14 +55,29 @@ const onDataChange = (action, film, cb, deleted) => {
         .then((comments) => {
           film.comments = comments;
           cb(film);
+        })
+        .catch(() => {
+          toggleError(commentsWrapEl, true);
+          changeCommentsState(commentsWrapEl, false);
         });
       break;
     case `update`:
+      const ratingWrapEl = document.querySelector(`.film-details__user-rating-wrap`);
+
+      if (ratingWrapEl) {
+        toggleError(ratingWrapEl, false);
+        changeRatingState(ratingWrapEl, true);
+      }
+
       api.updateMovie({
         id: film.id,
         data: film.toRAW(),
       })
-        .then(cb);
+        .then(cb)
+        .catch(() => {
+          toggleError(ratingWrapEl, true);
+          changeRatingState(ratingWrapEl, false);
+        });
       break;
     case `delete`:
       api.deleteComment({id: deleted})

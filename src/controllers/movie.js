@@ -7,13 +7,12 @@ import {FilmComments} from '../components/film-comments';
 import {API} from '../api';
 
 class MovieController {
-  constructor(container, data, onDataChange, onChangeView, position, onDataMainChange) {
+  constructor(container, data, onDataChange, onChangeView, position) {
     this._container = container;
     this._data = data;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
     this._position = position;
-    this._onDataMainChange = onDataMainChange;
     this._film = new Film(data);
     this._details = new FilmDetails(data);
     this._comments = null;
