@@ -30,8 +30,9 @@ class FilmListController {
     const extraLists = this._container.querySelectorAll(`.films-list--extra`);
     const filmId = this._films[filmIndex].id;
 
+    this._films[filmIndex] = newData;
+
     if (filmIndex >= 0 && filmIndex < mainList.querySelector(`.films-list__container`).children.length) {
-      this._films[filmIndex] = newData;
       this.renderCard(mainList, this._films[filmIndex], filmIndex, true);
     }
 
@@ -41,7 +42,9 @@ class FilmListController {
       for (let element of elements) {
         if (element.dataset.id === filmId) {
           const index = [...elements].indexOf(element);
-          this.renderCard(list, this._films[index], index, true);
+          const film = this._films.find((movie) => movie.id === filmId);
+
+          this.renderCard(list, film, index, true);
           break;
         }
       }
