@@ -7,16 +7,17 @@ import {FilmComments} from '../components/film-comments';
 import {API} from '../api';
 
 class MovieController {
-  constructor(container, data, onDataChange, onChangeView, position) {
+  constructor(container, data, onDataChange, onChangeView, position, onDataMainChange) {
     this._container = container;
     this._data = data;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
+    this._position = position;
+    this._onDataMainChange = onDataMainChange;
     this._film = new Film(data);
     this._details = new FilmDetails(data);
     this._comments = null;
     this._tmpData = null;
-    this._position = position;
     this._api = new API({endPoint: END_POINT, authorization: AUTH});
     this._onEscKeydown = this._onEscKeydown.bind(this);
   }
@@ -151,7 +152,7 @@ class MovieController {
 
             this._initTmpData();
             this._tmpData.comments.push(comment);
-            this._onDataChange(this._tmpData, this._data);
+            this._onDataChange(this._tmpData, this._data, `post`);
             this._resetTmpData();
           }
         };

@@ -32,15 +32,16 @@ const API = class {
       .then(ModelComment.parseComments);
   }
 
-  // createTask({task}) {
-  //   return this._load({
-  //     url: `tasks`,
-  //     method: `POST`,
-  //     body: JSON.stringify(task),
-  //     headers: new Headers({'Content-Type': `application/json`}),
-  //   })
-  //     .then(toJSON);
-  // }
+  postComment({filmId, comment}) {
+    return this._load({
+      url: `comments/${filmId}`,
+      method: `POST`,
+      body: JSON.stringify(comment),
+      headers: new Headers({'Content-Type': `application/json`}),
+    })
+      .then(toJSON)
+      .then(({comments}) => ModelComment.parseComments(comments));
+  }
 
   updateMovie({id, data}) {
     return this._load({

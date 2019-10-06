@@ -11,7 +11,7 @@ class FilmListController {
     this._subscriptions = [];
   }
 
-  _onDataChange(newData, oldData) {
+  _onDataChange(newData, oldData, action = `update`) {
     const filmIndex = this._films.findIndex((movie) => movie === oldData);
     const lists = [
       ...this._container.querySelectorAll(`.films-list`),
@@ -22,7 +22,7 @@ class FilmListController {
 
     lists.forEach((list) => {
       if (filmIndex >= 0 && filmIndex < list.querySelector(`.films-list__container`).children.length) {
-        this._onDataMainChange(`update`, newData, this._updateCard.bind(this, list, filmIndex));
+        this._onDataMainChange(action, newData, this._updateCard.bind(this, list, filmIndex));
       }
     });
   }
@@ -37,7 +37,7 @@ class FilmListController {
   }
 
   renderCard(listEl, film, position, openPopup) {
-    const movie = new MovieController(listEl, film, this._onDataChange, this._onChangeView, position);
+    const movie = new MovieController(listEl, film, this._onDataChange, this._onChangeView, position, this._onDataMainChange);
     const filmEl = movie.init();
     const elementIndex = [...document.querySelectorAll(`.film-card`)].indexOf(filmEl);
 

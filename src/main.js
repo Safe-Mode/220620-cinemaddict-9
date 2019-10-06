@@ -7,6 +7,7 @@ import {Search} from './components/search';
 import {SearchController} from './controllers/search';
 import {StatController} from './controllers/stat';
 import {API} from './api';
+import {ModelComment} from './model-comment';
 import {rankMap} from './data';
 
 const api = new API({
@@ -16,6 +17,16 @@ const api = new API({
 
 const onDataChange = (action, film, cb) => {
   switch (action) {
+    case `post`:
+      api.postComment({
+        filmId: film.id,
+        comment: ModelComment.toRAW([...film.comments].pop()),
+      })
+        .then((comments) => {
+          film.comments = comments;
+          cb(film);
+        });
+      break;
     case `update`:
       api.updateMovie({
         id: film.id,
