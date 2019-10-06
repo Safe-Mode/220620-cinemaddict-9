@@ -1,5 +1,5 @@
 import {SEARCH_MIN_LENGTH, END_POINT, AUTH} from './const';
-import {render, unrender, getRank} from './util';
+import {render, unrender, getRank, rankMap} from './util';
 import {PageController} from './controllers/page';
 import {Menu} from './components/menu';
 import {Profile} from './components/profile';
@@ -8,7 +8,6 @@ import {SearchController} from './controllers/search';
 import {StatController} from './controllers/stat';
 import {API} from './api';
 import {ModelComment} from './model-comment';
-import {rankMap} from './data';
 
 const api = new API({
   endPoint: END_POINT,

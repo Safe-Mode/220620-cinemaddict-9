@@ -61,4 +61,10 @@ const isEnterPressed = (key) => {
   return key === `Enter`;
 };
 
-export {getStats, getRank, createElement, render, unrender, isEscPressed, isEnterPressed};
+const rankMap = new Map([
+  [1, `Novice`],
+  [11, `Fan`],
+  [21, `Movie Buff`],
+]);
+
+export {getStats, getRank, createElement, render, unrender, isEscPressed, isEnterPressed, rankMap};
