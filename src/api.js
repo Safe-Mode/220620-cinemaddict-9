@@ -54,12 +54,12 @@ const API = class {
       .then(ModelMovie.parseMovie);
   }
 
-  // deleteTask({id}) {
-  //   return this._load({
-  //     url: `tasks/${id}`,
-  //     method: `DELETE`,
-  //   });
-  // }
+  deleteComment({id}) {
+    return this._load({
+      url: `comments/${id}`,
+      method: `DELETE`,
+    });
+  }
 
   _load({url, method = `GET`, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);

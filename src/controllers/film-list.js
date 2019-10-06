@@ -1,4 +1,3 @@
-// import {cloneDeep} from 'lodash';
 import {MovieController} from './movie';
 
 class FilmListController {
@@ -13,27 +12,40 @@ class FilmListController {
 
   _onDataChange(newData, oldData, action = `update`) {
     const filmIndex = this._films.findIndex((movie) => movie === oldData);
-    const lists = [
-      ...this._container.querySelectorAll(`.films-list`),
-      ...this._container.querySelectorAll(`.films-list--extra`)
-    ];
+    let deleted = null;
 
-    // this._films[filmIndex] = cloneDeep(newData);
+    if (action === `delete`) {
+      deleted = oldData.comments.find((comment) => !newData.comments.includes(comment));
+    }
 
-    lists.forEach((list) => {
-      if (filmIndex >= 0 && filmIndex < list.querySelector(`.films-list__container`).children.length) {
-        this._onDataMainChange(action, newData, this._updateCard.bind(this, list, filmIndex));
-      }
-    });
+    this._onDataMainChange(action, newData, this._updateCard.bind(this, filmIndex), deleted);
   }
 
   _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
   }
 
-  _updateCard(list, filmIndex, newData) {
-    this._films[filmIndex] = newData;
-    this.renderCard(list, this._films[filmIndex], filmIndex, true);
+  _updateCard(filmIndex, newData) {
+    const mainList = this._container.querySelector(`.films-list`);
+    const extraLists = this._container.querySelectorAll(`.films-list--extra`);
+    const filmId = this._films[filmIndex].id;
+
+    if (filmIndex >= 0 && filmIndex < mainList.querySelector(`.films-list__container`).children.length) {
+      this._films[filmIndex] = newData;
+      this.renderCard(mainList, this._films[filmIndex], filmIndex, true);
+    }
+
+    extraLists.forEach((list) => {
+      const elements = list.querySelector(`.films-list__container`).children;
+
+      for (let element of elements) {
+        if (element.dataset.id === filmId) {
+          const index = [...elements].indexOf(element);
+          this.renderCard(list, this._films[index], index, true);
+          break;
+        }
+      }
+    });
   }
 
   renderCard(listEl, film, position, openPopup) {

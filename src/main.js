@@ -15,7 +15,7 @@ const api = new API({
   authorization: AUTH,
 });
 
-const onDataChange = (action, film, cb) => {
+const onDataChange = (action, film, cb, deleted) => {
   switch (action) {
     case `post`:
       api.postComment({
@@ -33,6 +33,10 @@ const onDataChange = (action, film, cb) => {
         data: film.toRAW(),
       })
         .then(cb);
+      break;
+    case `delete`:
+      api.deleteComment({id: deleted})
+        .then(cb(film));
       break;
   }
 };

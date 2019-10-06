@@ -3,11 +3,12 @@ import {MIN_PER_HOUR, RADIX_TEN} from '../const';
 import {AbstractComponent} from './abstract-component';
 
 class FilmDetails extends AbstractComponent {
-  constructor({poster, age, title, rate, director, writers, actors, release, duration, country, genres, description, user: {watchlist, watched, favorite, rating}}) {
+  constructor({poster, age, title, alt, rate, director, writers, actors, release, duration, country, genres, description, user: {watchlist, watched, favorite, rating}}) {
     super();
     this._poster = poster;
     this._age = age;
     this._title = title;
+    this._alt = alt;
     this._rate = rate;
     this._director = director;
     this._writers = writers;
@@ -42,7 +43,7 @@ class FilmDetails extends AbstractComponent {
                 <div class="film-details__info-head">
                   <div class="film-details__title-wrap">
                     <h3 class="film-details__title">${this._title}</h3>
-                    <p class="film-details__title-original">Original: ${this._title}</p>
+                    <p class="film-details__title-original">Original: ${this._alt}</p>
                   </div>
 
                   <div class="film-details__rating">

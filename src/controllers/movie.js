@@ -75,21 +75,6 @@ class MovieController {
       this._resetTmpData();
     };
 
-    const onDeleteCommentClick = (evt) => {
-      evt.preventDefault();
-
-      this._initTmpData();
-
-      const commentIndex = [...this._details
-        .getElement()
-        .querySelectorAll(`.film-details__comment`)]
-        .indexOf(evt.target.closest(`li`));
-
-      this._tmpData.comments.splice(commentIndex, 1);
-      this._onDataChange(this._tmpData, this._data);
-      this._resetTmpData();
-    };
-
     const filmDetailsEl = this._details.getElement();
     const filmUserRateEl = filmDetailsEl.querySelector(`.film-details__user-rating-score`);
 
@@ -99,10 +84,6 @@ class MovieController {
     filmDetailsEl
       .querySelector(`.film-details__controls`)
       .addEventListener(`input`, onDetailsControlInput);
-
-    filmDetailsEl
-      .querySelectorAll(`.film-details__comment-delete`)
-      .forEach((delBtn) => delBtn.addEventListener(`click`, onDeleteCommentClick));
 
     if (filmUserRateEl) {
       filmUserRateEl.addEventListener(`input`, onRatingInput);
@@ -157,6 +138,21 @@ class MovieController {
           }
         };
 
+        const onDeleteCommentClick = (evt) => {
+          evt.preventDefault();
+
+          this._initTmpData();
+
+          const commentIndex = [...this._details
+            .getElement()
+            .querySelectorAll(`.film-details__comment`)]
+            .indexOf(evt.target.closest(`li`));
+
+          this._tmpData.comments.splice(commentIndex, 1);
+          this._onDataChange(this._tmpData, this._data, `delete`);
+          this._resetTmpData();
+        };
+
         const filmDetailsEl = this._details.getElement();
 
         this._comments = new FilmComments(comments);
@@ -171,6 +167,9 @@ class MovieController {
         filmDetailsEl
           .querySelector(`.film-details__comment-input`)
           .addEventListener(`keydown`, onCommentEnter);
+        filmDetailsEl
+          .querySelectorAll(`.film-details__comment-delete`)
+          .forEach((delBtn) => delBtn.addEventListener(`click`, onDeleteCommentClick));
       });
   }
 
