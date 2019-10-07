@@ -1,5 +1,5 @@
 import {EMOJIS} from '../const';
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class FilmComments extends AbstractComponent {
   constructor(comments) {
@@ -49,4 +49,4 @@ class FilmComments extends AbstractComponent {
   }
 }
 
-export {FilmComments};
+export default FilmComments;

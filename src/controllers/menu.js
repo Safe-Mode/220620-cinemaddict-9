@@ -1,5 +1,5 @@
 import {render, unrender} from '../util';
-import {Menu} from '../components/menu';
+import Menu from '../components/menu';
 
 class MenuController {
   constructor(container) {
@@ -51,4 +51,4 @@ class MenuController {
   }
 }
 
-export {MenuController};
+export default MenuController;

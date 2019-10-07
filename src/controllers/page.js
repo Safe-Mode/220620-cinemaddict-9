@@ -1,11 +1,11 @@
 import {cloneDeep} from 'lodash';
 import {CardsPerRow} from '../const';
 import {render, unrender} from '../util';
-import {Sort} from '../components/sort';
-import {Films} from '../components/films';
-import {FilmList} from '../components/film-list';
-import {FilmListController} from '../controllers/film-list';
-import {ShowMore} from '../components/show-more';
+import Sort from '../components/sort';
+import Films from '../components/films';
+import FilmList from '../components/film-list';
+import FilmListController from '../controllers/film-list';
+import ShowMore from '../components/show-more';
 
 class PageController {
   constructor(container, onDataChange) {
@@ -171,4 +171,4 @@ class PageController {
   }
 }
 
-export {PageController};
+export default PageController;

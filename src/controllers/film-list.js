@@ -1,4 +1,4 @@
-import {MovieController} from './movie';
+import MovieController from './movie';
 
 class FilmListController {
   constructor(container, films, onDataMainChange, onCommentsUpdate) {
@@ -71,4 +71,4 @@ class FilmListController {
   }
 }
 
-export {FilmListController};
+export default FilmListController;

@@ -1,4 +1,4 @@
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class Footer extends AbstractComponent {
   constructor(quantity) {
@@ -18,4 +18,4 @@ class Footer extends AbstractComponent {
   }
 }
 
-export {Footer};
+export default Footer;

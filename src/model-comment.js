@@ -24,4 +24,4 @@ class ModelComment {
   }
 }
 
-export {ModelComment};
+export default ModelComment;

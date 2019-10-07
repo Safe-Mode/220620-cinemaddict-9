@@ -1,5 +1,5 @@
 import {getStats} from '../util';
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class Menu extends AbstractComponent {
   constructor(films) {
@@ -20,4 +20,4 @@ class Menu extends AbstractComponent {
   }
 }
 
-export {Menu};
+export default Menu;

@@ -1,10 +1,10 @@
 import {cloneDeep} from 'lodash';
 import {END_POINT, AUTH} from '../const';
 import {render, unrender, isEscPressed, isEnterPressed} from '../util';
-import {Film} from '../components/film';
-import {FilmDetails} from '../components/film-details';
-import {FilmComments} from '../components/film-comments';
-import {API} from '../api';
+import Film from '../components/film';
+import FilmDetails from '../components/film-details';
+import FilmComments from '../components/film-comments';
+import API from '../api';
 
 class MovieController {
   constructor(container, data, onDataChange, onChangeView, position) {
@@ -226,4 +226,4 @@ class MovieController {
   }
 }
 
-export {MovieController};
+export default MovieController;

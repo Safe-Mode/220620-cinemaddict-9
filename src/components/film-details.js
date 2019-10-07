@@ -1,6 +1,5 @@
-// import moment from 'moment';
 import {MIN_PER_HOUR, RADIX_TEN} from '../const';
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class FilmDetails extends AbstractComponent {
   constructor({poster, age, title, alt, rate, director, writers, actors, release, duration, country, genres, description, user: {watchlist, watched, favorite, rating}}) {
@@ -157,4 +156,4 @@ class FilmDetails extends AbstractComponent {
   }
 }
 
-export {FilmDetails};
+export default FilmDetails;

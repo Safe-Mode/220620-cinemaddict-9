@@ -1,14 +1,14 @@
 import {SEARCH_MIN_LENGTH, END_POINT, AUTH} from './const';
 import {render, getRank, rankMap} from './util';
-import {PageController} from './controllers/page';
-import {MenuController} from './controllers/menu';
-import {Profile} from './components/profile';
-import {Search} from './components/search';
-import {SearchController} from './controllers/search';
-import {StatController} from './controllers/stat';
-import {Footer} from './components/footer';
-import {API} from './api';
-import {ModelComment} from './model-comment';
+import PageController from './controllers/page';
+import MenuController from './controllers/menu';
+import Profile from './components/profile';
+import Search from './components/search';
+import SearchController from './controllers/search';
+import StatController from './controllers/stat';
+import Footer from './components/footer';
+import API from './api';
+import ModelComment from './model-comment';
 
 const headerEl = document.querySelector(`.header`);
 const mainEl = document.querySelector(`.main`);

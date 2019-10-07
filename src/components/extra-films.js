@@ -1,4 +1,4 @@
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class ExtraFilms extends AbstractComponent {
   constructor(title) {
@@ -16,4 +16,4 @@ class ExtraFilms extends AbstractComponent {
   }
 }
 
-export {ExtraFilms};
+export default ExtraFilms;

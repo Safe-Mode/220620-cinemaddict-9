@@ -1,5 +1,5 @@
 import {MIN_PER_HOUR, RADIX_TEN} from '../const';
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class Film extends AbstractComponent {
   constructor({id, title, rate, release, duration, genres, poster, description, comments, user: {watchlist, watched, favorite}}) {
@@ -41,4 +41,4 @@ class Film extends AbstractComponent {
   }
 }
 
-export {Film};
+export default Film;

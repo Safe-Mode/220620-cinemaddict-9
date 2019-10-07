@@ -2,8 +2,8 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from 'moment';
 import {render, unrender} from '../util';
-import {Stat} from '../components/stat';
-import {StatInfo} from '../components/stat-info';
+import Stat from '../components/stat';
+import StatInfo from '../components/stat-info';
 
 class StatController {
   constructor(container, films, rank) {
@@ -161,4 +161,4 @@ class StatController {
   }
 }
 
-export {StatController};
+export default StatController;

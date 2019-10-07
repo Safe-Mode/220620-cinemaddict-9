@@ -1,4 +1,4 @@
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class Films extends AbstractComponent {
   getTemplate() {
@@ -8,4 +8,4 @@ class Films extends AbstractComponent {
   }
 }
 
-export {Films};
+export default Films;

@@ -1,4 +1,4 @@
-import {AbstractComponent} from "./abstract-component";
+import AbstractComponent from "./abstract-component";
 
 class Search extends AbstractComponent {
   getTemplate() {
@@ -15,4 +15,4 @@ class Search extends AbstractComponent {
   }
 }
 
-export {Search};
+export default Search;

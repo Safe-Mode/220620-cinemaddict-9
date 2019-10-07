@@ -1,6 +1,6 @@
 import {Status} from './const';
-import {ModelMovie} from './model-movie';
-import {ModelComment} from './model-comment';
+import ModelMovie from './model-movie';
+import ModelComment from './model-comment';
 
 const toJSON = (response) => {
   return response.json();
@@ -72,4 +72,4 @@ const API = class {
   }
 };
 
-export {API};
+export default API;

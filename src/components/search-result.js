@@ -1,4 +1,4 @@
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class SearchResult extends AbstractComponent {
   constructor(count) {
@@ -15,4 +15,4 @@ class SearchResult extends AbstractComponent {
   }
 }
 
-export {SearchResult};
+export default SearchResult;
