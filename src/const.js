@@ -12,5 +12,9 @@ const Status = {
 };
 const END_POINT = `https://htmlacademy-es-9.appspot.com/cinemaddict/`;
 const AUTH = `Basic lalala`;
+const StoreKey = {
+  MOVIES: `movies-store`,
+  COMMENTS: `comments-store`,
+};
 
-export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJIS, SEARCH_MIN_LENGTH, Status, END_POINT, AUTH};
+export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJIS, SEARCH_MIN_LENGTH, Status, END_POINT, AUTH, StoreKey};

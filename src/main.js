@@ -1,5 +1,5 @@
-import {SEARCH_MIN_LENGTH, END_POINT, AUTH} from './const';
-import {render, getRank, rankMap} from './util';
+import {SEARCH_MIN_LENGTH, END_POINT, AUTH, StoreKey} from './const';
+import {render, getRank, rankMap, changeCommentsState} from './util';
 import PageController from './controllers/page';
 import MenuController from './controllers/menu';
 import Profile from './components/profile';
@@ -8,6 +8,8 @@ import SearchController from './controllers/search';
 import StatController from './controllers/stat';
 import Footer from './components/footer';
 import API from './api';
+import Provider from './provider';
+import Store from './store';
 import ModelComment from './model-comment';
 
 const headerEl = document.querySelector(`.header`);
@@ -21,15 +23,17 @@ const api = new API({
   authorization: AUTH,
 });
 
-const changeCommentsState = (wrapper, isDisabled) => {
-  wrapper.querySelector(`.film-details__comment-input`).disabled = isDisabled;
+const movieStore = new Store({
+  key: StoreKey.MOVIES,
+  storage: window.localStorage,
+});
 
-  wrapper
-    .querySelectorAll(`.film-details__emoji-item`)
-    .forEach((item) => {
-      item.disabled = isDisabled;
-    });
-};
+const commentStore = new Store({
+  key: StoreKey.COMMENTS,
+  storage: window.localStorage,
+});
+
+const provider = new Provider({api, movieStore, commentStore});
 
 const changeRatingState = (wrapper, isDisabled) => {
   wrapper
@@ -75,7 +79,7 @@ const onDataChange = (action, film, cb, deleted) => {
         changeRatingState(ratingWrapEl, true);
       }
 
-      api.updateMovie({
+      provider.updateMovie({
         id: film.id,
         data: film.toRAW(),
       })
@@ -100,7 +104,16 @@ render(headerEl, searchEl);
 menu.init();
 page.init();
 
-api.getMovies().then((films) => {
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title}[OFFLINE]`;
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  provider.syncMovies();
+});
+
+provider.getMovies().then((films) => {
   const watched = films.filter(({user}) => user.watched);
   const rank = getRank(watched.length, rankMap);
   const stats = new StatController(mainEl, watched, rank);
@@ -128,7 +141,7 @@ api.getMovies().then((films) => {
       page.show(newFilms);
     };
 
-    api.getMovies().then((newFilms) => {
+    provider.getMovies().then((newFilms) => {
       let filtered = [];
 
       switch (target.hash) {
