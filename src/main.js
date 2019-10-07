@@ -60,7 +60,7 @@ const onDataChange = (action, film, cb, deleted) => {
       })
         .then((comments) => {
           film.comments = comments;
-          cb(film);
+          cb(film, action);
         })
         .catch(() => {
           toggleError(commentsWrapEl, true);
@@ -88,7 +88,7 @@ const onDataChange = (action, film, cb, deleted) => {
     case `delete`:
       api.deleteComment({id: deleted})
         .then(() => {
-          cb(film);
+          cb(film, action);
         });
       break;
   }

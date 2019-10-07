@@ -23,6 +23,7 @@ class PageController {
     this._bandyList = null;
     this._filmListController = null;
     this._showMore = new ShowMore();
+    this._onCommentsUpdate = this._onCommentsUpdate.bind(this);
   }
 
   _renderCardsRow(films, listEl, cardsPerRow, isAdded = true, isContinues = false) {
@@ -87,6 +88,17 @@ class PageController {
     }
   }
 
+  _onCommentsUpdate(films) {
+    const bandyListEl = this._bandyList.getElement();
+
+    this._films = films;
+    this._filmsToRender = films;
+    this._sortedByComments = cloneDeep(films).sort((filmsA, filmsB) => filmsB.comments.length - filmsA.comments.length);
+
+    bandyListEl.querySelector(`.films-list__container`).innerHTML = ``;
+    this._renderCardsRow(this._sortedByComments, bandyListEl, CardsPerRow.EXTRA, false);
+  }
+
   update(films) {
     this._films = films;
     this._filmsToRender = films;
@@ -95,7 +107,7 @@ class PageController {
     this._mainList = new FilmList(`All movies. Upcoming`, this._films);
     this._topList = new FilmList(`Top rated`, this._sortedByRating, true);
     this._bandyList = new FilmList(`Most commented`, this._sortedByComments, true);
-    this._filmListController = new FilmListController(this._board.getElement(), this._films, this._onDataChange);
+    this._filmListController = new FilmListController(this._board.getElement(), this._films, this._onDataChange, this._onCommentsUpdate);
     this.init();
   }
 
@@ -105,7 +117,7 @@ class PageController {
     this._films = films;
     this._filmsToRender = films;
     this._mainList = new FilmList(`All movies. Upcoming`, this._filmsToRender);
-    this._filmListController = new FilmListController(this._board.getElement(), this._filmsToRender, this._onDataChange);
+    this._filmListController = new FilmListController(this._board.getElement(), this._filmsToRender, this._onDataChange, this._onCommentsUpdate);
     this._filmsRendered = 0;
     this._renderCardsRow(this._filmsToRender, this._mainList.getElement(), CardsPerRow.MAIN);
     oldList.replaceWith(this._mainList.getElement());

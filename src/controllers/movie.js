@@ -153,9 +153,11 @@ class MovieController {
         };
 
         const filmDetailsEl = this._details.getElement();
+        const bottomEl = filmDetailsEl.querySelector(`.form-details__bottom-container`);
 
         this._comments = new FilmComments(comments);
-        render(filmDetailsEl.querySelector(`.form-details__bottom-container`), this._comments.getElement());
+        bottomEl.innerHTML = ``;
+        render(bottomEl, this._comments.getElement());
 
         filmDetailsEl
           .querySelector(`.film-details__comment-input`)

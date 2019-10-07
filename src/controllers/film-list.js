@@ -1,10 +1,11 @@
 import {MovieController} from './movie';
 
 class FilmListController {
-  constructor(container, films, onDataMainChange) {
+  constructor(container, films, onDataMainChange, onCommentsUpdate) {
     this._container = container;
     this._films = films;
     this._onDataMainChange = onDataMainChange;
+    this._onCommentsUpdate = onCommentsUpdate;
     this._onDataChange = this._onDataChange.bind(this);
     this._onChangeView = this._onChangeView.bind(this);
     this._subscriptions = [];
@@ -25,7 +26,7 @@ class FilmListController {
     this._subscriptions.forEach((subscription) => subscription());
   }
 
-  _updateCard(filmIndex, newData) {
+  _updateCard(filmIndex, newData, action) {
     const filmId = this._films[filmIndex].id;
     const lists = [
       this._container.querySelector(`.films-list`),
@@ -47,6 +48,10 @@ class FilmListController {
         }
       }
     });
+
+    if (action === `post` || action === `delete`) {
+      this._onCommentsUpdate(this._films);
+    }
   }
 
   renderCard(listEl, film, position, openPopup) {
