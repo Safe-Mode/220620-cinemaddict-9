@@ -25,4 +25,4 @@ class AbstractComponent {
   }
 }
 
-export {AbstractComponent};
+export default AbstractComponent;

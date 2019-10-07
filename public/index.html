@@ -8,6 +8,37 @@
   <link rel="stylesheet" type="text/css" media="screen" href="./css/normalize.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
   <title>Cinemaddict</title>
+  <style>
+    @keyframes shake {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      10%,
+      30%,
+      50%,
+      70%,
+      90% {
+        transform: translateX(-5px);
+      }
+
+      20%,
+      40%,
+      60%,
+      80% {
+        transform: translateX(5px);
+      }
+    }
+
+    .shake {
+      animation: shake 0.6s;
+    }
+
+    .error {
+      box-shadow: 0 0 1px red;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,14 +57,6 @@
 
   <!-- Контент -->
 </main>
-
-
-<footer class="footer">
-  <section class="footer__logo logo logo--smaller">Cinemaddict</section>
-  <section class="footer__statistics">
-    <p>130 291 movies inside</p>
-  </section>
-</footer>
 
 <script src="js/bundle.js"></script>
 </body>

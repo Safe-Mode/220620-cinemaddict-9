@@ -101,10 +101,4 @@ for (let i = 0; i < FILMS_QUANTITY; i++) {
   films.push(getFilmData());
 }
 
-const rankMap = new Map([
-  [1, `Novice`],
-  [11, `Fan`],
-  [21, `Movie Buff`],
-]);
-
-export {films, AMOUNT as amount, rankMap};
+export {films, AMOUNT as amount};

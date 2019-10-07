@@ -1,4 +1,4 @@
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class Profile extends AbstractComponent {
   constructor(rank) {
@@ -16,4 +16,4 @@ class Profile extends AbstractComponent {
   }
 }
 
-export {Profile};
+export default Profile;

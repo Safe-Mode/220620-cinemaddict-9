@@ -65,4 +65,4 @@ class ModelMovie {
   }
 }
 
-export {ModelMovie};
+export default ModelMovie;

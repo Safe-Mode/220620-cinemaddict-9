@@ -1,9 +1,10 @@
 import {MIN_PER_HOUR, RADIX_TEN} from '../const';
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class Film extends AbstractComponent {
-  constructor({title, rate, release, duration, genres, poster, description, comments, user: {watchlist, watched, favorite}}) {
+  constructor({id, title, rate, release, duration, genres, poster, description, comments, user: {watchlist, watched, favorite}}) {
     super();
+    this._id = id;
     this._title = title;
     this._rate = rate;
     this._release = release;
@@ -19,7 +20,7 @@ class Film extends AbstractComponent {
 
   getTemplate() {
     return `
-      <article class="film-card">
+      <article class="film-card" data-id="${this._id}">
         <h3 class="film-card__title">${this._title}</h3>
         <p class="film-card__rating">${this._rate}</p>
         <p class="film-card__info">
@@ -40,4 +41,4 @@ class Film extends AbstractComponent {
   }
 }
 
-export {Film};
+export default Film;

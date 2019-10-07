@@ -1,8 +1,8 @@
 import {render, unrender} from '../util';
-import {Films} from '../components/films';
-import {FilmList} from '../components/film-list';
-import {SearchResult} from './../components/search-result';
-import {FilmListController} from './../controllers/film-list';
+import Films from '../components/films';
+import FilmList from '../components/film-list';
+import SearchResult from './../components/search-result';
+import FilmListController from './../controllers/film-list';
 
 class SearchController {
   constructor(container, films, search) {
@@ -48,4 +48,4 @@ class SearchController {
   }
 }
 
-export {SearchController};
+export default SearchController;

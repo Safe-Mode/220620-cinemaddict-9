@@ -1,4 +1,4 @@
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class Stat extends AbstractComponent {
   constructor(rank) {
@@ -43,4 +43,4 @@ class Stat extends AbstractComponent {
   }
 }
 
-export {Stat};
+export default Stat;

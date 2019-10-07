@@ -1,6 +1,6 @@
 import {Status} from './const';
-import {ModelMovie} from './model-movie';
-import {ModelComment} from './model-comment';
+import ModelMovie from './model-movie';
+import ModelComment from './model-comment';
 
 const toJSON = (response) => {
   return response.json();
@@ -32,15 +32,16 @@ const API = class {
       .then(ModelComment.parseComments);
   }
 
-  // createTask({task}) {
-  //   return this._load({
-  //     url: `tasks`,
-  //     method: `POST`,
-  //     body: JSON.stringify(task),
-  //     headers: new Headers({'Content-Type': `application/json`}),
-  //   })
-  //     .then(toJSON);
-  // }
+  postComment({filmId, comment}) {
+    return this._load({
+      url: `comments/${filmId}`,
+      method: `POST`,
+      body: JSON.stringify(comment),
+      headers: new Headers({'Content-Type': `application/json`}),
+    })
+      .then(toJSON)
+      .then(({movie: {comments}}) => comments);
+  }
 
   updateMovie({id, data}) {
     return this._load({
@@ -53,12 +54,12 @@ const API = class {
       .then(ModelMovie.parseMovie);
   }
 
-  // deleteTask({id}) {
-  //   return this._load({
-  //     url: `tasks/${id}`,
-  //     method: `DELETE`,
-  //   });
-  // }
+  deleteComment({id}) {
+    return this._load({
+      url: `comments/${id}`,
+      method: `DELETE`,
+    });
+  }
 
   _load({url, method = `GET`, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
@@ -71,4 +72,4 @@ const API = class {
   }
 };
 
-export {API};
+export default API;

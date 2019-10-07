@@ -1,5 +1,5 @@
 import {MIN_PER_HOUR} from '../const';
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class StatInfo extends AbstractComponent {
   constructor(films, topGenre) {
@@ -31,4 +31,4 @@ class StatInfo extends AbstractComponent {
   }
 }
 
-export {StatInfo};
+export default StatInfo;

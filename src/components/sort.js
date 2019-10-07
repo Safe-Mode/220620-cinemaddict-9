@@ -1,4 +1,4 @@
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class Sort extends AbstractComponent {
   getTemplate() {
@@ -18,4 +18,4 @@ class Sort extends AbstractComponent {
   }
 }
 
-export {Sort};
+export default Sort;

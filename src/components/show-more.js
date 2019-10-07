@@ -1,4 +1,4 @@
-import {AbstractComponent} from './abstract-component';
+import AbstractComponent from './abstract-component';
 
 class ShowMore extends AbstractComponent {
   getTemplate() {
@@ -8,4 +8,4 @@ class ShowMore extends AbstractComponent {
   }
 }
 
-export {ShowMore};
+export default ShowMore;
