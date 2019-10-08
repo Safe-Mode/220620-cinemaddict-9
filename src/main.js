@@ -10,7 +10,7 @@ import Footer from './components/footer';
 import API from './api';
 import Provider from './provider';
 import Store from './store';
-import ModelComment from './model-comment';
+import ModelComment from './models/comment';
 
 const headerEl = document.querySelector(`.header`);
 const mainEl = document.querySelector(`.main`);

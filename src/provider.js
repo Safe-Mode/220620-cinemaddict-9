@@ -1,10 +1,9 @@
-import ModelMovie from './model-movie';
-import ModelComment from './model-comment';
+import ModelMovie from './models/movie';
+import ModelComment from './models/comment';
 
 const objectToArray = (object) => {
   return Object.keys(object).map((id) => object[id]);
 };
-
 
 class Provider {
   constructor({api, movieStore, commentStore}) {
