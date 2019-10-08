@@ -1,6 +1,6 @@
 import {Status} from './const';
-import ModelMovie from './model-movie';
-import ModelComment from './model-comment';
+import ModelMovie from './models/movie';
+import ModelComment from './models/comment';
 
 const toJSON = (response) => {
   return response.json();
