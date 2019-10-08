@@ -30,7 +30,7 @@ class MenuController {
     unrender(this._menu.getElement());
   }
 
-  update(films, toggleContent) {
+  update(toggleContent, films) {
     const oldElement = this._menu.getElement();
 
     this._menu = new Menu(films);
