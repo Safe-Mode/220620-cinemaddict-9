@@ -1,4 +1,5 @@
-import {SEARCH_MIN_LENGTH, END_POINT, AUTH, StoreKey} from './const';
+import {debounce} from 'lodash';
+import {SEARCH_MIN_LENGTH, END_POINT, AUTH, StoreKey, DEBOUNCE_TIME} from './const';
 import {render, getRank, rankMap, changeCommentsState} from './util';
 import PageController from './controllers/page';
 import MenuController from './controllers/menu';
@@ -175,7 +176,7 @@ provider.getMovies().then((films) => {
 
   searchEl
     .querySelector(`.search__field`)
-    .addEventListener(`input`, (evt) => {
+    .addEventListener(`input`, debounce((evt) => {
       const value = evt.target.value.toLowerCase();
       const searchFilms = films.filter((film) => film.title.toLowerCase().includes(value));
 
@@ -193,7 +194,7 @@ provider.getMovies().then((films) => {
       } else {
         hideSearchBoard();
       }
-    });
+    }, DEBOUNCE_TIME));
 
   searchEl.addEventListener(`reset`, hideSearchBoard);
 
