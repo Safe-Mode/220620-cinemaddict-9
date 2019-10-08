@@ -67,4 +67,14 @@ const rankMap = new Map([
   [21, `Movie Buff`],
 ]);
 
-export {getStats, getRank, createElement, render, unrender, isEscPressed, isEnterPressed, rankMap};
+const changeCommentsState = (wrapper, isDisabled) => {
+  wrapper.querySelector(`.film-details__comment-input`).disabled = isDisabled;
+
+  wrapper
+    .querySelectorAll(`.film-details__emoji-item`)
+    .forEach((item) => {
+      item.disabled = isDisabled;
+    });
+};
+
+export {getStats, getRank, createElement, render, unrender, isEscPressed, isEnterPressed, rankMap, changeCommentsState};

@@ -26,7 +26,7 @@ class FilmListController {
     this._subscriptions.forEach((subscription) => subscription());
   }
 
-  _updateCard(filmIndex, newData, action) {
+  _updateCard(filmIndex, newData, action, onFilmUpdate) {
     const filmId = this._films[filmIndex].id;
     const lists = [
       this._container.querySelector(`.films-list`),
@@ -51,6 +51,8 @@ class FilmListController {
 
     if (action === `post` || action === `delete`) {
       this._onCommentsUpdate(this._films);
+    } else {
+      onFilmUpdate(this._films);
     }
   }
 

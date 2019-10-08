@@ -1,4 +1,4 @@
-import {MIN_PER_HOUR, RADIX_TEN} from '../const';
+import {MIN_PER_HOUR, RADIX_TEN, MAX_FILM_RATE} from '../const';
 import AbstractComponent from './abstract-component';
 
 class FilmDetails extends AbstractComponent {
@@ -122,7 +122,7 @@ class FilmDetails extends AbstractComponent {
 
                   <div class="film-details__user-rating-score">
 
-                    ${new Array(9).fill(``).map((it, i) => `
+                    ${new Array(MAX_FILM_RATE).fill(``).map((it, i) => `
                       <input
                         type="radio"
                         name="score"
@@ -146,12 +146,6 @@ class FilmDetails extends AbstractComponent {
           <div class="form-details__bottom-container"></div>
         </form>
       </section>
-    `;
-  }
-
-  getRatingTemplate() {
-    return `
-
     `;
   }
 }

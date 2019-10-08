@@ -61,6 +61,16 @@ const API = class {
     });
   }
 
+  syncMovies({movies}) {
+    return this._load({
+      url: `movies/sync`,
+      method: `POST`,
+      body: JSON.stringify(movies),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then(toJSON);
+  }
+
   _load({url, method = `GET`, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 

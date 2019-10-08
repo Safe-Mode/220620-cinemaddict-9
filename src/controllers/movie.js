@@ -1,10 +1,12 @@
 import {cloneDeep} from 'lodash';
-import {END_POINT, AUTH} from '../const';
-import {render, unrender, isEscPressed, isEnterPressed} from '../util';
+import {END_POINT, AUTH, StoreKey} from '../const';
+import {render, unrender, isEscPressed, isEnterPressed, changeCommentsState} from '../util';
 import Film from '../components/film';
 import FilmDetails from '../components/film-details';
 import FilmComments from '../components/film-comments';
 import API from '../api';
+import Provider from '../provider';
+import Store from '../store';
 
 class MovieController {
   constructor(container, data, onDataChange, onChangeView, position) {
@@ -18,6 +20,9 @@ class MovieController {
     this._comments = null;
     this._tmpData = null;
     this._api = new API({endPoint: END_POINT, authorization: AUTH});
+    this._movieStore = new Store({key: StoreKey.MOVIES, storage: window.localStorage});
+    this._commentStore = new Store({key: StoreKey.COMMENTS, storage: window.localStorage});
+    this._provider = new Provider({api: this._api, movieStore: this._movieStore, commentStore: this._commentStore});
     this._onEscKeydown = this._onEscKeydown.bind(this);
   }
 
@@ -95,7 +100,7 @@ class MovieController {
     render(document.body, this._details.getElement());
     this._toggleBodyScroll();
 
-    this._api.getComments(this._data.id)
+    this._provider.getComments(this._data.id)
       .then((comments) => {
         const onCommentBlur = () => {
           document.addEventListener(`keydown`, this._onEscKeydown);
@@ -156,8 +161,15 @@ class MovieController {
         const bottomEl = filmDetailsEl.querySelector(`.form-details__bottom-container`);
 
         this._comments = new FilmComments(comments);
+
+        const commentsEl = this._comments.getElement();
+
+        if (!Provider.isOnline()) {
+          changeCommentsState(commentsEl, true);
+        }
+
         bottomEl.innerHTML = ``;
-        render(bottomEl, this._comments.getElement());
+        render(bottomEl, commentsEl);
 
         filmDetailsEl
           .querySelector(`.film-details__comment-input`)
@@ -168,9 +180,12 @@ class MovieController {
         filmDetailsEl
           .querySelector(`.film-details__comment-input`)
           .addEventListener(`keydown`, onCommentEnter);
-        filmDetailsEl
-          .querySelectorAll(`.film-details__comment-delete`)
-          .forEach((delBtn) => delBtn.addEventListener(`click`, onDeleteCommentClick));
+
+        if (Provider.isOnline()) {
+          filmDetailsEl
+            .querySelectorAll(`.film-details__comment-delete`)
+            .forEach((delBtn) => delBtn.addEventListener(`click`, onDeleteCommentClick));
+        }
       });
   }
 

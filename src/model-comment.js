@@ -17,10 +17,15 @@ class ModelComment {
 
   static toRAW(data) {
     return {
+      'id': data.id,
       'comment': data.text,
       'date': new Date(data.published).toISOString(),
       'emotion': data.emoji,
     };
+  }
+
+  toRAW() {
+    return ModelComment.toRAW(this);
   }
 }
 
