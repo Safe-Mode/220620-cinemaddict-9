@@ -58,6 +58,16 @@
   <!-- Контент -->
 </main>
 
+<script>
+  navigator.serviceWorker.register(`./sw.js`)
+    .then(function(reg) {
+      console.info(`Registration succeeded. Scope is ${reg.scope}`);
+    })
+    .catch(function(error) {
+      console.warn(`Registration failed with ${error}`);
+    });
+</script>
+
 <script src="js/bundle.js"></script>
 </body>
 </html>
