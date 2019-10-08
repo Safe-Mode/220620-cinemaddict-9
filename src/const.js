@@ -16,5 +16,6 @@ const StoreKey = {
   MOVIES: `movies-store`,
   COMMENTS: `comments-store`,
 };
+const MAX_FILM_RATE = 9;
 
-export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJIS, SEARCH_MIN_LENGTH, Status, END_POINT, AUTH, StoreKey};
+export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJIS, SEARCH_MIN_LENGTH, Status, END_POINT, AUTH, StoreKey, MAX_FILM_RATE};
