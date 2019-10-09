@@ -6,7 +6,7 @@ class Menu extends AbstractComponent {
   constructor(films, activeLink) {
     super();
     this._stats = (films) ? getStats(films) : null;
-    this._activeLink = activeLink;
+    this._activeLink = (activeLink) ? activeLink : null;
   }
 
   _checkActiveState(anchor) {

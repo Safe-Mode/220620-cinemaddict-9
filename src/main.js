@@ -87,13 +87,11 @@ const onDataChange = (action, film, cb, deleted) => {
         data: film.toRAW(),
       })
         .then((movie) => {
-          const films = movies.map((it) => {
-            it = (it.id === movie.id) ? movie : it;
-            return it;
+          provider.getMovies().then((films) => {
+            movies = films.map((it) => (it.id === movie.id) ? movie : it);
+            menu.update(toggleContent, movies);
+            cb(movie);
           });
-
-          menu.update(toggleContent, films);
-          cb(movie);
         })
         .catch(() => {
           toggleError(ratingWrapEl, true);
@@ -156,33 +154,31 @@ provider.getMovies().then((films) => {
       page.show(newFilms);
     };
 
-    provider.getMovies().then((newFilms) => {
-      let filtered = [];
+    let filtered = [];
 
-      switch (target.hash) {
-        case `#all`:
-          updateFilms(newFilms);
-          break;
-        case `#watchlist`:
-          filtered = newFilms.filter(({user}) => user.watchlist);
-          updateFilms(filtered);
-          break;
-        case `#history`:
-          filtered = newFilms.filter(({user}) => user.watched);
-          updateFilms(filtered);
-          break;
-        case `#favorites`:
-          filtered = newFilms.filter(({user}) => user.favorite);
-          updateFilms(filtered);
-          break;
-        case `#stats`:
-          page.hide();
-          stats.show();
-          break;
-      }
+    switch (target.hash) {
+      case `#all`:
+        updateFilms(movies);
+        break;
+      case `#watchlist`:
+        filtered = movies.filter(({user}) => user.watchlist);
+        updateFilms(filtered);
+        break;
+      case `#history`:
+        filtered = movies.filter(({user}) => user.watched);
+        updateFilms(filtered);
+        break;
+      case `#favorites`:
+        filtered = movies.filter(({user}) => user.favorite);
+        updateFilms(filtered);
+        break;
+      case `#stats`:
+        page.hide();
+        stats.show();
+        break;
+    }
 
-      changeLinkState(target);
-    });
+    changeLinkState(target);
   };
 
   searchEl

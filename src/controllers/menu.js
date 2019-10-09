@@ -44,7 +44,7 @@ class MenuController {
 
     menuEl.addEventListener(`click`, (evt) => {
       evt.preventDefault();
-      this._toggleContent(evt.target, films, this._changeActiveLinkState);
+      this._toggleContent(evt.target, this._changeActiveLinkState);
     });
 
     oldElement.replaceWith(this._menu.getElement());
