@@ -1,5 +1,5 @@
 import {debounce} from 'lodash';
-import {SEARCH_MIN_LENGTH, END_POINT, AUTH, StoreKey, DEBOUNCE_TIME} from './const';
+import {Length, END_POINT, AUTH, StoreKey, DEBOUNCE_TIME} from './const';
 import {render, getRank, rankMap, changeCommentsState} from './util';
 import PageController from './controllers/page';
 import MenuController from './controllers/menu';
@@ -133,7 +133,7 @@ provider.getMovies().then((films) => {
   };
 
   const checkSearch = (value) => {
-    return value.length >= SEARCH_MIN_LENGTH;
+    return value.length >= Length.SEARCH_MIN;
   };
 
   const hideSearchBoard = () => {

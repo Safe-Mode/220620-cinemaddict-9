@@ -1,6 +1,9 @@
 const MIN_PER_HOUR = 60;
 const RADIX_TEN = 10;
-const SEARCH_MIN_LENGTH = 3;
+const Length = {
+  SEARCH_MIN: 3,
+  DESC_MAX: 140,
+};
 const CardsPerRow = {
   MAIN: 5,
   EXTRA: 2,
@@ -29,4 +32,4 @@ const Nav = {
   },
 };
 
-export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJIS, SEARCH_MIN_LENGTH, Status, END_POINT, AUTH, StoreKey, MAX_FILM_RATE, DEBOUNCE_TIME, Nav};
+export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJIS, Length, Status, END_POINT, AUTH, StoreKey, MAX_FILM_RATE, DEBOUNCE_TIME, Nav};
