@@ -25,7 +25,9 @@ class MenuController {
   }
 
   show() {
-    render(this._container, this._menu.getElement());
+    const menuEl = this._menu.getElement();
+    this._changeActiveLinkState(menuEl.querySelector(`[href="#${Nav.Anchor.ALL}"]`));
+    render(this._container, menuEl);
   }
 
   hide() {
@@ -42,7 +44,7 @@ class MenuController {
 
     menuEl.addEventListener(`click`, (evt) => {
       evt.preventDefault();
-      this._toggleContent(evt.target, this._changeActiveLinkState);
+      this._toggleContent(evt.target, films, this._changeActiveLinkState);
     });
 
     oldElement.replaceWith(this._menu.getElement());

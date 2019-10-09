@@ -134,6 +134,10 @@ provider.getMovies().then((films) => {
     mainEl.innerHTML = ``;
   };
 
+  const checkSearch = (value) => {
+    return value.length >= SEARCH_MIN_LENGTH;
+  };
+
   const hideSearchBoard = () => {
     if (searchController) {
       menu.show();
@@ -183,16 +187,16 @@ provider.getMovies().then((films) => {
 
   searchEl
     .querySelector(`.search__field`)
-    .addEventListener(`input`, debounce((evt) => {
-      const value = evt.target.value.toLowerCase();
-      const searchFilms = films.filter((film) => film.title.toLowerCase().includes(value));
+    .addEventListener(`input`, debounce(({target: {value}}) => {
+      const searchFilms = films.filter((film) => film.title.toLowerCase().includes(value.toLowerCase()));
 
-      if (value.length >= SEARCH_MIN_LENGTH) {
+      if (checkSearch(value)) {
         if (searchController) {
           clearMainEl();
         } else {
           menu.hide();
           page.hide();
+          stats.hide();
         }
 
         searchController = new SearchController(mainEl, searchFilms, search);
@@ -203,8 +207,13 @@ provider.getMovies().then((films) => {
       }
     }, DEBOUNCE_TIME));
 
+  searchEl.addEventListener(`reset`, ({target}) => {
+    if (checkSearch(new FormData(target).get(`search`))) {
+      hideSearchBoard();
+    }
+  });
+
   movies = films;
-  searchEl.addEventListener(`reset`, hideSearchBoard);
   render(headerEl, new Profile(rank).getElement());
   menu.update(toggleContent, films);
   stats.init();
