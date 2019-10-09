@@ -18,5 +18,15 @@ const StoreKey = {
 };
 const MAX_FILM_RATE = 9;
 const DEBOUNCE_TIME = 500;
+const Nav = {
+  ACTIVE_CLS: `main-navigation__item--active`,
+  Anchor: {
+    ALL: `all`,
+    WATCHLIST: `watchlist`,
+    HISTORY: `history`,
+    FAVORITES: `favorites`,
+    STATS: `stats`,
+  },
+};
 
-export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJIS, SEARCH_MIN_LENGTH, Status, END_POINT, AUTH, StoreKey, MAX_FILM_RATE, DEBOUNCE_TIME};
+export {MIN_PER_HOUR, RADIX_TEN, CardsPerRow, EMOJIS, SEARCH_MIN_LENGTH, Status, END_POINT, AUTH, StoreKey, MAX_FILM_RATE, DEBOUNCE_TIME, Nav};

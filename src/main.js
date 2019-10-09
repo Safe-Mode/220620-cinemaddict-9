@@ -18,7 +18,8 @@ const mainEl = document.querySelector(`.main`);
 const search = new Search();
 const searchEl = search.getElement();
 const menu = new MenuController(mainEl);
-let toggleContent;
+let toggleContent = null;
+let movies = [];
 
 const api = new API({
   endPoint: END_POINT,
@@ -86,7 +87,13 @@ const onDataChange = (action, film, cb, deleted) => {
         data: film.toRAW(),
       })
         .then((movie) => {
-          cb(movie, action, menu.update.bind(menu, toggleContent));
+          const films = movies.map((it) => {
+            it = (it.id === movie.id) ? movie : it;
+            return it;
+          });
+
+          menu.update(toggleContent, films);
+          cb(movie);
         })
         .catch(() => {
           toggleError(ratingWrapEl, true);
@@ -196,8 +203,8 @@ provider.getMovies().then((films) => {
       }
     }, DEBOUNCE_TIME));
 
+  movies = films;
   searchEl.addEventListener(`reset`, hideSearchBoard);
-
   render(headerEl, new Profile(rank).getElement());
   menu.update(toggleContent, films);
   stats.init();
